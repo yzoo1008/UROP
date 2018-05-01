@@ -21,6 +21,7 @@ for id in train_ids:
     train_y.append(mask/255)
 
 for id in test_ids:
+    img_path = "./data/resize/test" + str(id) + ".jpg"
     mask_path = "./data/mask/test" + str(id) + ".jpg"
     img = cv2.imread(img_path)
     mask = cv2.imread(mask_path)
