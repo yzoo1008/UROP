@@ -7,26 +7,34 @@ import numpy as np
 test_ids = open("./data/test/ids.txt").read().splitlines()
 train_ids = open("./data/train/ids.txt").read().splitlines()
 whole_ids = {"test": test_ids, "train": train_ids}
-train_x = np.array([])
-test_x = np.array([])
-train_y = np.array([])
-test_y = np.array([])
 
+cnt = 0
 for id in train_ids:
-    img_path = "./data/resize/train" + str(id) + ".jpg"
-    mask_path = "./data/mask/train" + str(id) + ".jpg"
+    img_path = "./data/resize/train/" + str(id) + ".jpg"
+    mask_path = "./data/mask/train/" + str(id) + ".jpg"
     img = cv2.imread(img_path)
-    mask = cv2.imread(mask_path)
-    train_x.append(img)
-    train_y.append(mask/255)
+    mask = cv2.imread(mask_path)/255
+    if cnt==0:
+		train_x = img
+		train_y = mask
+		cnt=cnt+1
+    else:
+		train_x = np.stack(train_x, img)
+		train_y = np.stack(train_y, mask)
 
+cnt = 0
 for id in test_ids:
-    img_path = "./data/resize/test" + str(id) + ".jpg"
-    mask_path = "./data/mask/test" + str(id) + ".jpg"
+    img_path = "./data/resize/test/" + str(id) + ".jpg"
+    mask_path = "./data/mask/test/" + str(id) + ".jpg"
     img = cv2.imread(img_path)
-    mask = cv2.imread(mask_path)
-    test_x.append(img)
-    test_y.append(mask/255)
+    mask = cv2.imread(mask_path)/255
+    if cnt==0:
+		test_x = img
+		test_y = mask
+		cnt=cnt+1
+    else:
+		test_x = np.stack(test_x, img)
+		test_y = np.stack(test_y, mask)
 
 
 learning_rate = 0.01
