@@ -8,19 +8,20 @@ test_ids = open("./data/test/ids.txt").read().splitlines()
 train_ids = open("./data/train/ids.txt").read().splitlines()
 whole_ids = {"test": test_ids, "train": train_ids}
 
+train_x = np.zeros((len(train_ids), 512, 512, 3))
+test_x = np.zeros((len(test_ids), 512, 512, 3))
+train_y = np.zeros((len(train_ids), 32, 32, 3))
+test_y = np.zeros((len(test_ids), 32, 32, 3))
+
 cnt = 0
 for id in train_ids:
     img_path = "./data/resize/train/" + str(id) + ".jpg"
     mask_path = "./data/mask/train/" + str(id) + ".jpg"
     img = cv2.imread(img_path)
     mask = cv2.imread(mask_path)/255
-    if cnt==0:
-		train_x = img
-		train_y = mask
-		cnt=cnt+1
-    else:
-		train_x = np.stack(train_x, img)
-		train_y = np.stack(train_y, mask)
+    train_x[cnt] = img
+    train_y[cnt] = mask
+    cnt=cnt+1
 
 cnt = 0
 for id in test_ids:
@@ -28,13 +29,9 @@ for id in test_ids:
     mask_path = "./data/mask/test/" + str(id) + ".jpg"
     img = cv2.imread(img_path)
     mask = cv2.imread(mask_path)/255
-    if cnt==0:
-		test_x = img
-		test_y = mask
-		cnt=cnt+1
-    else:
-		test_x = np.stack(test_x, img)
-		test_y = np.stack(test_y, mask)
+    test_x[cnt] = img
+    test_y[cnt] = mask
+    cnt=cnt+1
 
 
 learning_rate = 0.01
