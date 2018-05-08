@@ -38,7 +38,7 @@ learning_rate = 0.01
 num_epochs = 1000
 dropout_rate = 0.5
 
-x = tf.placeholder(tf.float32, [-1, 512, 512, 3])
+x = tf.placeholder(tf.float32, [None, 512, 512, 3])
 y = tf.placeholder(tf.float32, [None, 32, 32, 1])
 keep_prob = tf.placeholder(tf.float32)
 
@@ -51,7 +51,8 @@ optimizer = tf.train.GradientDescentOptimizer(learning_rate)
 gvs = optimizer.compute_gradients(cost)
 apply_gradients = optimizer.apply_gradients(gvs)
 
-prediction = tf.to_int32(score > 0.6)
+prediction_int = tf.to_int32(score > 0.6)
+prediction = tf.to_float(prediction_int)
 correct_prediction = tf.reduce_all(tf.equal(prediction, y))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
