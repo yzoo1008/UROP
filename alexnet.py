@@ -10,25 +10,25 @@ class AlexNet(object):
 
     def create(self):
         # 1st Layer: Conv (w ReLu) -> Lrn -> Pool
-        conv1 = conv(self.X, 11, 11, 96, 4, 4, padding='VALID', name='conv1')   # 512x512x3 => 128x128x96
-        norm1 = lrn(conv1, 2, 1e-05, 0.75, name='norm1')
-        pool1 = max_pool(norm1, 3, 3, 2, 2, padding='VALID', name='pool1')      # 128x128x96 => 64x64x96
+        self.conv1 = conv(self.X, 11, 11, 96, 4, 4, name='conv1')                         # 512x512x3 => 128x128x96
+        self.norm1 = lrn(self.conv1, 2, 1e-05, 0.75, name='norm1')
+        self.pool1 = max_pool(self.norm1, 3, 3, 2, 2, name='pool1')                       # 128x128x96 => 64x64x96
 
         # 2nd Layer: Conv (w ReLu)  -> Lrn -> Pool with 2 groups
-        conv2 = conv(pool1, 5, 5, 256, 1, 1, groups=2, name='conv2')            # 64x64x96 => 64x64x256
-        norm2 = lrn(conv2, 2, 1e-05, 0.75, name='norm2')
-        pool2 = max_pool(norm2, 3, 3, 2, 2, padding='VALID', name='pool2')      # 64x64x256 => 32x32x256
+        self.conv2 = conv(self.pool1, 5, 5, 256, 1, 1, groups=2, name='conv2')            # 64x64x96 => 64x64x256
+        self.norm2 = lrn(self.conv2, 2, 1e-05, 0.75, name='norm2')
+        self.pool2 = max_pool(self.norm2, 3, 3, 2, 2, name='pool2')                       # 64x64x256 => 32x32x256
 
         # 3rd Layer: Conv (w ReLu)
-        conv3 = conv(pool2, 3, 3, 384, 1, 1, name='conv3')                      # 32x32x256 => 32x32x384
+        self.conv3 = conv(self.pool2, 3, 3, 384, 1, 1, name='conv3')                      # 32x32x256 => 32x32x384
 
         # 4th Layer: Conv (w ReLu) splitted into two groups
-        conv4 = conv(conv3, 3, 3, 384, 1, 1, groups=2, name='conv4')            # 32x32x384 => 32x32x384
+        self.conv4 = conv(self.conv3, 3, 3, 384, 1, 1, groups=2, name='conv4')            # 32x32x384 => 32x32x384
 
         # 5th Layer: Conv (w ReLu) -> Pool splitted into two groups
-        conv5 = conv(conv4, 3, 3, 256, 1, 1, groups=2, name='conv5')            # 32x32x384 => 32x32x256
+        self.conv5 = conv(self.conv4, 3, 3, 256, 1, 1, groups=2, name='conv5')            # 32x32x384 => 32x32x256
 
-        self.conv6 = conv(conv5, 3, 3, 1, 1, 1, name='conv6')                   # 32x32x256 => 32x32x1
+        self.conv6 = conv(self.conv5, 3, 3, 1, 1, 1, name='conv6')                        # 32x32x256 => 32x32x1
 
 
 def conv(x, filter_height, filter_width, num_filters, stride_y, stride_x, name, padding='SAME', groups=1):
@@ -80,8 +80,7 @@ def fc(x, num_in, num_out, name, relu=True):
     else:
         return act
 
-def max_pool(x, filter_height, filter_width, stride_y, stride_x, name,
-             padding='SAME'):
+def max_pool(x, filter_height, filter_width, stride_y, stride_x, name, padding='SAME'):
     return tf.nn.max_pool(x, ksize=[1, filter_height, filter_width, 1],
                           strides=[1, stride_y, stride_x, 1],
                           padding=padding, name=name)

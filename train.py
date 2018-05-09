@@ -45,6 +45,16 @@ keep_prob = tf.placeholder(tf.float32)
 model = AlexNet(x, keep_prob)
 score = model.conv6
 
+'''
+print((model.X).get_shape())
+print((model.conv1).get_shape())
+print((model.conv2).get_shape())
+print((model.conv3).get_shape())
+print((model.conv4).get_shape())
+print((model.conv5).get_shape())
+print((model.conv6).get_shape())
+'''
+
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=score, labels=y))
 optimizer = tf.train.GradientDescentOptimizer(learning_rate)
 
@@ -62,5 +72,5 @@ with tf.Session() as sess:
     for epoch in range(num_epochs):
         sess.run(apply_gradients, feed_dict={x: train_x, y: train_y, keep_prob: dropout_rate})
         if epoch%10==0:
-            loss, acc = sess.run([cost, accuracy], feed_dict={x: train_x, y: train_y, keep_prob: dropout_rate})
-            print("Step: {:5}\tLoss: {:.3f}\tAcc:{:.2%}".format(epoch, loss, acc))
+			loss, acc = sess.run([cost, accuracy], feed_dict={x: train_x, y: train_y, keep_prob: dropout_rate})
+			print("Step: {:5}\tLoss: {:.3f}\tAcc:{:.2%}".format(epoch, loss, acc))
