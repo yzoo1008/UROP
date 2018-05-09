@@ -10,15 +10,15 @@ whole_ids = {"test": test_ids, "train": train_ids}
 
 train_x = np.zeros((len(train_ids), 512, 512, 3))
 test_x = np.zeros((len(test_ids), 512, 512, 3))
-train_y = np.zeros((len(train_ids), 32, 32, 3))
-test_y = np.zeros((len(test_ids), 32, 32, 3))
+train_y = np.zeros((len(train_ids), 32, 32, 1))
+test_y = np.zeros((len(test_ids), 32, 32, 1))
 
 cnt = 0
 for id in train_ids:
     img_path = "./data/resize/train/" + str(id) + ".jpg"
-    mask_path = "./data/mask/train/" + str(id) + ".jpg"
+    mask_path = "./data/mask/train/" + str(id) + ".npy"
     img = cv2.imread(img_path)
-    mask = cv2.imread(mask_path)/255
+    mask = np.load(mask_path)
     train_x[cnt] = img
     train_y[cnt] = mask
     cnt=cnt+1
@@ -26,9 +26,9 @@ for id in train_ids:
 cnt = 0
 for id in test_ids:
     img_path = "./data/resize/test/" + str(id) + ".jpg"
-    mask_path = "./data/mask/test/" + str(id) + ".jpg"
+    mask_path = "./data/mask/test/" + str(id) + ".npy"
     img = cv2.imread(img_path)
-    mask = cv2.imread(mask_path)/255
+    mask = np.load(mask_path)
     test_x[cnt] = img
     test_y[cnt] = mask
     cnt=cnt+1

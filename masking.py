@@ -30,8 +30,28 @@ for case in whole_ids:
 
 			for y in range(y_min, y_max+1):
 				for x in range(x_min, x_max+1):
-					mask[y, x] = 1
-
-		cv2.imwrite("./data/mask/" + case + "/" + str(id) + ".jpg", mask*255)
-
-
+					mask[y, x] = 255
+#cv2.imwrite("./data/mask/" + case + "/" + str(id) + ".jpg", mask)
+		np.save("./data/mask_npy/" + case + "/" + str(id), mask)
+'''
+arr = np.load("./data/mask_npy/train/9998.npy")
+print(np.shape(arr))
+for i in range(X_out):
+	for j in range(Y_out):
+		print(arr[i][j])
+'''
+'''
+img_d = cv2.imread("./data/mask/train/9998.jpg")
+img = cv2.imread("./data/mask/train/9998.jpg", cv2.IMREAD_GRAYSCALE)
+img_reshape = np.reshape(img, (32, 32, 1))
+print(np.shape(img_d))
+print(np.shape(img))
+print(np.shape(img_reshape))
+for i in range(X_out):
+	for j in range(Y_out):
+		print(img[i][j], img_reshape[i][j][0])
+print("------------------------------------")
+for i in range(X_out):
+	for j in range(Y_out):
+		print(img_d[i][j])
+'''
