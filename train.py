@@ -46,16 +46,7 @@ keep_prob = tf.placeholder(tf.float32)
 model = AlexNet(x, keep_prob)
 score = model.conv6
 
-'''
-print((model.X).get_shape())
-print((model.conv1).get_shape())
-print((model.conv2).get_shape())
-print((model.conv3).get_shape())
-print((model.conv4).get_shape())
-print((model.conv5).get_shape())
-print((model.conv6).get_shape())
-'''
-
+cost_sub = tf.reduce_mean(tf.square(score-y))
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=score, labels=y))
 optimizer = tf.train.GradientDescentOptimizer(learning_rate)
 
@@ -74,13 +65,13 @@ with tf.Session() as sess:
 	sess.run(tf.global_variables_initializer())
 	for epoch in range(num_epochs):
 		avg_loss = 0
+		avg_loss_sub = 0
 		total_batch = int(cnt/batch_size)
 		for i in range(total_batch):
 			x_batch, y_batch = train_x[i*batch_size:(i+1)*batch_size], train_y[i*batch_size:(i+1)*batch_size]
 			feed_dict = {x: x_batch, y: y_batch, keep_prob: dropout_rate}
-			loss, acc, _, s = sess.run([cost, accuracy, apply_gradients, score], feed_dict=feed_dict)
+			loss, acc, _, loss_sub = sess.run([cost, accuracy, apply_gradients, cost_sub], feed_dict=feed_dict)
 			avg_loss += loss / total_batch
-			for r in range(32):
-				for c in range(32):
-					print(s.shape)
+			avg_loss_sub += loss_sub / total_batch
 		print("Step: {:5}\tLoss: {:.3f}\tAcc:{:.2%}".format(epoch, avg_loss, acc))
+		print("Loss_sub: {:.3f}".format(avg_loss_sub))
