@@ -50,7 +50,7 @@ cost_sub = tf.reduce_mean(tf.square(score-y))
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=score, labels=y))
 optimizer = tf.train.GradientDescentOptimizer(learning_rate)
 
-gvs = optimizer.compute_gradients(cost)
+gvs = optimizer.compute_gradients(cost_sub)
 apply_gradients = optimizer.apply_gradients(gvs)
 
 prediction_int = tf.to_int32(score > 0.6)
