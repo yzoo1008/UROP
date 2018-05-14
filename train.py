@@ -13,28 +13,35 @@ test_x = np.zeros((len(test_ids), 512, 512, 3))
 train_y = np.zeros((len(train_ids), 32, 32, 1))
 test_y = np.zeros((len(test_ids), 32, 32, 1))
 
-cnt = 0
+cnt_train = 0
 for id in train_ids:
     img_path = "./data/resize/train/" + str(id) + ".jpg"
     mask_path = "./data/mask_npy/train/" + str(id) + ".npy"
     img = cv2.imread(img_path)
     mask = np.load(mask_path)
-    train_x[cnt] = img
-    train_y[cnt] = mask
-    cnt=cnt+1
+    train_x[cnt_train] = img
+    train_y[cnt_train] = mask
+    cnt_train=cnt_train+1
 
-cnt = 0
+cnt_test = 0
 for id in test_ids:
     img_path = "./data/resize/test/" + str(id) + ".jpg"
     mask_path = "./data/mask_npy/test/" + str(id) + ".npy"
     img = cv2.imread(img_path)
     mask = np.load(mask_path)
-    test_x[cnt] = img
-    test_y[cnt] = mask
-    cnt=cnt+1
+    test_x[cnt_test] = img
+    test_y[cnt_test] = mask
+    cnt_test=cnt_test+1
 
 
-learning_rate = 0.01
+starter_learning_rate = 0.1
+learning_decay = 0.96
+NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = cnt_train
+NUM_EXAMPLES_PER_EPOCH_FOR_TEST = cnt_test
+NUM_EPOCHES_PER_DECAY = 350.0
+LEARNING_RATE_DECAY_FACTOR = 0.1
+INITIAL_LEARNING_RATE = 0.1
+
 num_epochs = 1000
 dropout_rate = 0.5
 batch_size = 32
@@ -46,12 +53,23 @@ keep_prob = tf.placeholder(tf.float32)
 model = AlexNet(x, keep_prob)
 score = model.conv6
 
-cost_sub = tf.reduce_mean(tf.square(score-y))
-cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=score, labels=y))
+ms = tf.reduce_mean(tf.square(score-y))
+
+global_step = tf.train.get_or_create_global_step()
+num_batches_per_epoch = NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN / batch_size
+decay_steps = int(num_batches_per_epoch * NUM_EPOCHS_PER_DECAY)
+learning_rate = tf.train.exponential_decay(
+		starter_learning_rate,
+		global_step,
+		decay_steps,
+		LEARNING_RATE_DECAY_FACTOR,
+		staircase=True
+		)
+
 optimizer = tf.train.GradientDescentOptimizer(learning_rate)
 
-gvs = optimizer.compute_gradients(cost_sub)
-apply_gradients = optimizer.apply_gradients(gvs)
+gvs = optimizer.compute_gradients(ms)
+apply_gradients = optimizer.apply_gradients(gvs, global_step=global_step)
 
 prediction_int = tf.to_int32(score > 0.6)
 prediction = tf.to_float(prediction_int)

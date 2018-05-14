@@ -30,7 +30,7 @@ for case in whole_ids:
 
 			for y in range(y_min, y_max+1):
 				for x in range(x_min, x_max+1):
-					mask[y, x] = 1
+					mask[y, x] = 255.0
 #cv2.imwrite("./data/mask/" + case + "/" + str(id) + ".jpg", mask)
 		np.save("./data/mask_npy/" + case + "/" + str(id), mask)
 '''
