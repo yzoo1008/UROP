@@ -33,6 +33,8 @@ for case in whole_ids:
 					mask[y, x] = 255.0
 #cv2.imwrite("./data/mask/" + case + "/" + str(id) + ".jpg", mask)
 		np.save("./data/mask_npy/" + case + "/" + str(id), mask)
+
+
 '''
 arr = np.load("./data/mask_npy/train/9998.npy")
 print(np.shape(arr))
