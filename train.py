@@ -36,12 +36,12 @@ for id in test_ids:
 NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = cnt_train
 NUM_EXAMPLES_PER_EPOCH_FOR_TEST = cnt_test
 NUM_EPOCHES_PER_DECAY = 350.0
-LEARNING_RATE_DECAY_FACTOR = 0.1
-INITIAL_LEARNING_RATE = 0.1
+lr_decay_factor = 0.1
+initial_lr = 0.01
 
 num_epochs = 1000
 dropout_rate = 0.5
-batch_size = 32
+batch_size = 64
 
 x = tf.placeholder(tf.float32, [None, 512, 512, 3])
 y = tf.placeholder(tf.float32, [None, 32, 32, 1])
@@ -50,16 +50,17 @@ keep_prob = tf.placeholder(tf.float32)
 model = AlexNet(x, keep_prob)
 score = model.conv6
 
+'''
 learning_rate = INITIAL_LEARNING_RATE
-ms = tf.reduce_mean(tf.square(score-y))
-optimizer = tf.train.AdamOptimizer(learning_rate).minimize(ms)
+mse = tf.reduce_mean(tf.square(score-y))
+optimizer = tf.train.AdamOptimizer(learning_rate).minimize(mse)
 
 global_step = tf.Variable(0, trainable=False)
 num_batches_per_epoch = int(NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN / batch_size)
 decay_steps = int(num_batches_per_epoch * NUM_EPOCHES_PER_DECAY)
 '''
 learning_rate = tf.train.exponential_decay(
-		INITIAL_LEARNING_RATE,
+		initial_lr,
 		global_step,
 		decay_steps,
 		LEARNING_RATE_DECAY_FACTOR,
@@ -95,8 +96,8 @@ with tf.Session() as sess:
 		for i in range(tb):
 			x_batch, y_batch = train_x[i*batch_size:(i+1)*batch_size], train_y[i*batch_size:(i+1)*batch_size]
 			feed_dict = {x: x_batch, y: y_batch, keep_prob: dropout_rate}
-#			loss, _, sc, lr = sess.run([ms, apply_gradient_op, score, learning_rate], feed_dict=feed_dict)
-			loss, _, sc = sess.run([ms, optimizer, score], feed_dict=feed_dict)
+#			loss, _, sc, lr = sess.run([mse, apply_gradient_op, score, learning_rate], feed_dict=feed_dict)
+			loss, _, sc = sess.run([mse, optimizer, score], feed_dict=feed_dict)
 			avg_loss += loss / tb
 			
 			for index in range(batch_size):
