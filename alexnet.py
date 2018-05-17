@@ -28,8 +28,14 @@ class AlexNet(object):
         # 5th Layer: Conv (w ReLu) -> Pool splitted into two groups
         conv5 = conv(conv4, 3, 3, 256, 1, 1, groups=2, name='conv5')            # 32x32x384 => 32x32x256
 
-        self.conv6 = conv(conv5, 3, 3, 1, 1, 1, name='conv6')                   # 32x32x256 => 32x32x1
+        conv6 = conv(conv5, 3, 3, 1, 1, 1, name='conv6')                        # 32x32x256 => 32x32x1
 
+        flattened = tf.reshape(conv6, [-1, 32 * 32 * 1])
+        fc7 = fc(flattened, 32 * 32 * 1, 1024, name='fc6')
+        dropout7 = dropout(fc7, self.KEEP_PROB)
+
+        # 7th Layer: FC (w ReLu) -> Dropout
+        self.fc8 = fc(dropout7, 1024, 1024, name='fc7')
 
 def conv(x, filter_height, filter_width, num_filters, stride_y, stride_x, name, padding='SAME', groups=1):
     # Get number of input channels
