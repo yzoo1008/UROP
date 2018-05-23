@@ -104,7 +104,7 @@ with tf.Session() as sess:
 
 #						if sc[index][row][col] != 0.0:
 #							print(sc[index][row][col], index, row, col)
-				cv2.imwrite('./data/score/train/'+str(epoch)+'/'+str(i*batch_size+index)+'.jpg', sc)
+				cv2.imwrite('./data/score/train/'+str(epoch)+'/'+str(i*batch_size+index)+'.jpg', sc[index])
 			print("Step: {:5d}\t Num_Batch: {:5d}\tLoss: {:.3f}\t".format(epoch, i, loss))
 #						if y_batch[index][i][j] == 255.0:
 #							print(y_batch[index][i][j], index, i, j)
