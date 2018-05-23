@@ -86,23 +86,25 @@ with tf.Session() as sess:
 		for i in range(tb):
 			x_batch, y_batch = train_x[i*batch_size:(i+1)*batch_size], train_y[i*batch_size:(i+1)*batch_size]
 			feed_dict = {x: x_batch, y: y_batch, keep_prob: dropout_rate}
-#			loss, _, sc, lr = sess.run([mse, apply_gradient_op, score, learning_rate], feed_dict=feed_dict)
+#			loss, _, sc, lr = sess.run([mse, optimizer, score, learning_rate], feed_dict=feed_dict)
 			loss, _, sc = sess.run([mse, optimizer, score], feed_dict=feed_dict)
 			avg_loss += loss / tb
 			
 			for index in range(batch_size):
 				for row in range(32):
 					for col in range(32):
+#						print(sc[index][row][col])
+
 						if sc[index][row][col] > 150.0:
 							num_predict_truth += 1
 							if y_batch[index][row][col] == 255.0:
 								correct_answer += 1
 						if y_batch[index][row][col] == 255.0:
 							num_truth += 1
-						
+
 #						if sc[index][row][col] != 0.0:
 #							print(sc[index][row][col], index, row, col)
-
+				cv2.imwrite('./data/score/train/'+str(epoch)+'/'+str(i*batch_size+index)+'.jpg', sc)
 			print("Step: {:5d}\t Num_Batch: {:5d}\tLoss: {:.3f}\t".format(epoch, i, loss))
 #						if y_batch[index][i][j] == 255.0:
 #							print(y_batch[index][i][j], index, i, j)
