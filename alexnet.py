@@ -4,10 +4,9 @@ import numpy as np
 
 class AlexNet(object):
 
-	def __init__(self, x, keep_prob, num_classes, skip_layer, weights_path='NONE'):
+	def __init__(self, x, keep_prob, skip_layer, weights_path='NONE'):
 
 		self.X = x
-		self.NUM_CLASSES = num_classes
 		self.KEEP_PROB = keep_prob
 		self.SKIP_LAYER = skip_layer
 
@@ -45,10 +44,10 @@ class AlexNet(object):
 		conv6 = conv(conv5, 3, 3, 64, 1, 1, name='conv6')               # 32x32x256 -> 32x32x64
 
 		# 7th Layer: Conv (w ReLu)
-		conv7 = conv(conv6, 3, 3, 16, 1, 1, name='conv6')               # 32x32x64 -> 32x32x16
+		conv7 = conv(conv6, 3, 3, 16, 1, 1, name='conv7')               # 32x32x64 -> 32x32x16
 
 		# 8th Layer: Conv (w ReLu)
-		self.conv8 = conv(conv7, 3, 3, 1, 1, 1, name='conv6')           # 32x32x16 -> 32x32x1
+		self.conv8 = conv(conv7, 3, 3, 1, 1, 1, name='conv8')           # 32x32x16 -> 32x32x1
 
 
 	def load_initial_weights(self, session):
