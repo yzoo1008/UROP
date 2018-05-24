@@ -37,7 +37,7 @@ NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = cnt_train
 NUM_EXAMPLES_PER_EPOCH_FOR_TEST = cnt_test
 
 num_epochs = 10
-batch_size = 64
+batch_size = 32
 learning_rate = 0.01
 
 dropout_rate = 0.5
@@ -91,6 +91,8 @@ with tf.Session() as sess:
 			avg_loss += loss / tb
 			
 			for index in range(batch_size):
+#				f = open('./data/score/train/'+str(epoch)+'/'+str(i*batch_size+index)+'.txt', 'w')
+#				sc_print = "["
 				for row in range(32):
 					for col in range(32):
 #						print(sc[index][row][col])
@@ -104,7 +106,15 @@ with tf.Session() as sess:
 
 #						if sc[index][row][col] != 0.0:
 #							print(sc[index][row][col], index, row, col)
-				cv2.imwrite('./data/score/train/'+str(epoch)+'/'+str(i*batch_size+index)+'.jpg', sc[index])
+#						sc_print += sc[index][row][col] + " "
+#						sc_w = "%d" %sc[index][row][col]
+#						f.write(sc_w)
+#					sc_w = "\n"
+#					sc_print += "\n"
+#					f.write(sc_w)
+#				f.close()
+#				print(sc_print)
+
 			print("Step: {:5d}\t Num_Batch: {:5d}\tLoss: {:.3f}\t".format(epoch, i, loss))
 #						if y_batch[index][i][j] == 255.0:
 #							print(y_batch[index][i][j], index, i, j)
