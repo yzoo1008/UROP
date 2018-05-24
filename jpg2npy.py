@@ -10,5 +10,5 @@ for case in whole_ids:
 	for id in whole_ids[case]:
 		img_path = "./data/resize/" + case + "/" + str(id) + ".jpg"
 		img = cv2.imread(img_path)
-		print(img.shpae())
+		print(img.shape)
 		np.save("./data/resize_npy/" + case + "/" + str(id), img)
