@@ -42,7 +42,8 @@ var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] in train
 
 # Op for calculating the loss
 with tf.name_scope("cross_ent"):
-	loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=score, labels=y))
+	loss = tf.reduce_mean(tf.square(score - y))
+#	loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=score, labels=y))
 
 # Train op
 with tf.name_scope("train"):
@@ -65,13 +66,47 @@ for var in var_list:
 # Add the loss to summary
 tf.summary.scalar('cross_entropy', loss)
 
-# Evaluation op: Accuracy of the model
-with tf.name_scope("accuracy"):
-	correct_pred = tf.equal(tf.argmax(score, 1), tf.argmax(y, 1))
-	accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+with tf.name_scope("recall"):
+	num_correct = 0
+	num_truth = 0
+	x_threshold = tf.to_int32(score >= 100.)
+	y_threshold = tf.to_int32(y >= 255.)
 
-# Add the accuracy to the summary
-tf.summary.scalar('accuracy', accuracy)
+	for i in range(batch_size):
+		for x in range(32):
+			for y in range(32):
+				if y_threshold[i][x][y] == 1:
+					num_truth += 1
+					if x_threshold[i][x][y] == 1:
+						num_correct += 1
+
+	if num_truth == 0:
+		recall = 0
+	else:
+		recall = num_correct/num_truth
+
+with tf.name_scope("precision"):
+	num_correct = 0
+	num_pred = 0
+	x_threshold = tf.to_int32(score >= 100.)
+	y_threshold = tf.to_int32(y >= 255.)
+
+	for i in range(batch_size):
+		for x in range(32):
+			for y in range(32):
+				if x_threshold[i][x][y] == 1:
+					num_pred += 1
+					if y_threshold[i][x][y] == 1:
+						num_correct += 1
+
+	if num_pred == 0:
+		precision = 0
+	else:
+		precision = num_correct/num_pred
+
+
+tf.summary.scalar('recall', recall)
+tf.summary.scalar('precision', precision)
 
 # Merge all summaries together
 merged_summary = tf.summary.merge_all()
@@ -82,13 +117,13 @@ writer = tf.summary.FileWriter(filewriter_path)
 # Initialize an saver for store model checkpoints
 saver = tf.train.Saver()
 
-# Initalize the data generator seperately for the training and validation set
+# Initalize the data generator seperately for the train and test set
 train_generator = DataSet(mode='train')
-val_generator = DataSet(mode='test')
+test_generator = DataSet(mode='test')
 
-# Get the number of training/validation steps per epoch
+# Get the number of train/test steps per epoch
 train_batches_per_epoch = np.floor(train_generator.data_size / batch_size).astype(np.int16)
-val_batches_per_epoch = np.floor(val_generator.data_size / batch_size).astype(np.int16)
+test_batches_per_epoch = np.floor(test_generator.data_size / batch_size).astype(np.int16)
 
 # Start Tensorflow session
 with tf.Session() as sess:
@@ -102,8 +137,7 @@ with tf.Session() as sess:
 	model.load_initial_weights(sess)
 
 	print("{} Start training...".format(datetime.now()))
-	print("{} Open Tensorboard at --logdir {}".format(datetime.now(),
-	                                                  filewriter_path))
+	print("{} Open Tensorboard at --logdir {}".format(datetime.now(), filewriter_path))
 
 	# Loop over number of epochs
 	for epoch in range(num_epochs):
@@ -131,22 +165,25 @@ with tf.Session() as sess:
 
 			step += 1
 
-		# Validate the model on the entire validation set
-		print("{} Start validation".format(datetime.now()))
-		test_acc = 0.
+		# Test the model on the entire test set
+		print("{} Start test".format(datetime.now()))
+		test_rec = 0.
+		test_pre = 0.
 		test_count = 0
-		for _ in range(val_batches_per_epoch):
-			batch_tx, batch_ty = val_generator.next_batch(batch_size)
-			acc = sess.run(accuracy, feed_dict={x: batch_tx,
+		for _ in range(test_batches_per_epoch):
+			batch_tx, batch_ty = test_generator.next_batch(batch_size)
+			rec, pre = sess.run([recall, precision], feed_dict={x: batch_tx,
 			                                    y: batch_ty,
 			                                    keep_prob: 1.})
-			test_acc += acc
+			test_rec += rec
+			test_pre += pre
 			test_count += 1
-		test_acc /= test_count
-		print("{} Validation Accuracy = {:.4f}".format(datetime.now(), test_acc))
+		test_rec /= test_count
+		test_pre /= test_count
+		print("{} Test Recall = {:.4f}\t Precision = {:.4f}".format(datetime.now(), test_rec, test_pre))
 
 		# Reset the file pointer of the image data generator
-		val_generator.reset_pointer()
+		test_generator.reset_pointer()
 		train_generator.reset_pointer()
 
 		print("{} Saving checkpoint of model...".format(datetime.now()))

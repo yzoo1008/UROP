@@ -53,30 +53,33 @@ class AlexNet(object):
 	def load_initial_weights(self, session):
 
 		# Load the weights into memory
-		weights_dict = np.load(self.WEIGHTS_PATH, encoding='bytes').item()
+		if self.WEIGHTS_PATH == None:
+			pass
+		else:
+			weights_dict = np.load(self.WEIGHTS_PATH, encoding='bytes').item()
 
-		# Loop over all layer names stored in the weights dict
-		for op_name in weights_dict:
+			# Loop over all layer names stored in the weights dict
+			for op_name in weights_dict:
 
-			# Check if the layer is one of the layers that should be reinitialized
-			if op_name not in self.SKIP_LAYER:
+				# Check if the layer is one of the layers that should be reinitialized
+				if op_name not in self.SKIP_LAYER:
 
-				with tf.variable_scope(op_name, reuse=True):
+					with tf.variable_scope(op_name, reuse=True):
 
-					# Loop over list of weights/biases and assign them to their corresponding tf variable
-					for data in weights_dict[op_name]:
+						# Loop over list of weights/biases and assign them to their corresponding tf variable
+						for data in weights_dict[op_name]:
 
-						# Biases
-						if len(data.shape) == 1:
+							# Biases
+							if len(data.shape) == 1:
 
-							var = tf.get_variable('biases', trainable=False)
-							session.run(var.assign(data))
+								var = tf.get_variable('biases', trainable=False)
+								session.run(var.assign(data))
 
-						# Weights
-						else:
+							# Weights
+							else:
 
-							var = tf.get_variable('weights', trainable=False)
-							session.run(var.assign(data))
+								var = tf.get_variable('weights', trainable=False)
+								session.run(var.assign(data))
 
 
 
