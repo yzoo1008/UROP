@@ -15,10 +15,6 @@ class DataSet:
 		self.ids = open('./data/' + mode + '/ids.txt').read().splitlines()
 		self.data_size = (len(self.ids))
 
-		if mode == 'train':
-			self.ids = "./data/train/ids.txt"
-		elif mode == 'test':
-			self.ids = "./data/test/ids.txt"
 		self.read_data()
 
 
@@ -37,17 +33,12 @@ class DataSet:
 		imgs_path = self.x[self.pointer:self.pointer + batch_size]
 		masks_path = self.y[self.pointer:self.pointer + batch_size]
 
-		print(self.x)
-		print(self.x[0])
-
 		#update pointer
 		self.pointer += batch_size
 
 		# Read images
 		images = np.ndarray([batch_size, self.in_size[0], self.in_size[1], 3])
 		for i in range(len(imgs_path)):
-			print(imgs_path)
-			print(imgs_path[i])
 			img = cv2.imread(imgs_path[i])
 			img = img.astype(np.float32)
 			images[i] = img
@@ -65,3 +56,11 @@ class DataSet:
 	def reset_pointer(self):
 
 		self.pointer = 0
+
+'''
+if __name__ == '__main__':
+	train_generator = DataSet(mode='train')
+	print(train_generator.x[0])
+	print(train_generator.ids[0])
+	batch_xs, batch_ys = train_generator.next_batch(32)
+'''
