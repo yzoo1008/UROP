@@ -21,7 +21,7 @@ display_step = 1
 
 # Path for tf.summary.FileWriter and to store model checkpoints
 filewriter_path = "./tf_board/mask"
-checkpoint_path = "/tf_board/"
+checkpoint_path = "./tf_board/"
 
 # Create parent path if it doesn't exist
 if not os.path.isdir(checkpoint_path): os.mkdir(checkpoint_path)
