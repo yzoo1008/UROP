@@ -37,12 +37,17 @@ class DataSet:
 		imgs_path = self.x[self.pointer:self.pointer + batch_size]
 		masks_path = self.y[self.pointer:self.pointer + batch_size]
 
+		print(self.x)
+		print(self.x[0])
+
 		#update pointer
 		self.pointer += batch_size
 
 		# Read images
 		images = np.ndarray([batch_size, self.in_size[0], self.in_size[1], 3])
 		for i in range(len(imgs_path)):
+			print(imgs_path)
+			print(imgs_path[i])
 			img = cv2.imread(imgs_path[i])
 			img = img.astype(np.float32)
 			images[i] = img
