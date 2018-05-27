@@ -73,11 +73,11 @@ with tf.name_scope("recall"):
 	y_threshold = tf.to_int32(y >= 255.)
 
 	for i in range(batch_size):
-		for x in range(32):
-			for y in range(32):
-				if y_threshold[i][x][y] == 1:
+		for row in range(32):
+			for col in range(32):
+				if y_threshold[i][row][col] == 1:
 					num_truth += 1
-					if x_threshold[i][x][y] == 1:
+					if x_threshold[i][row][col] == 1:
 						num_correct += 1
 
 	if num_truth == 0:
@@ -92,11 +92,11 @@ with tf.name_scope("precision"):
 	y_threshold = tf.to_int32(y >= 255.)
 
 	for i in range(batch_size):
-		for x in range(32):
-			for y in range(32):
-				if x_threshold[i][x][y] == 1:
+		for row in range(32):
+			for col in range(32):
+				if x_threshold[i][row][col] == 1:
 					num_pred += 1
-					if y_threshold[i][x][y] == 1:
+					if y_threshold[i][row][col] == 1:
 						num_correct += 1
 
 	if num_pred == 0:
@@ -153,7 +153,16 @@ with tf.Session() as sess:
 
 			# And run the training op
 			sess.run(train_op, feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
-
+			'''
+			Traceback (most recent call last):
+			  File "run.py", line 155, in <module>
+			    sess.run(train_op, feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
+			  File "/usr/local/lib/python2.7/dist-packages/tensorflow/python/client/session.py", line 778, in run
+			    run_metadata_ptr)
+			  File "/usr/local/lib/python2.7/dist-packages/tensorflow/python/client/session.py", line 933, in _run
+			    + e.args[0])
+			TypeError: Cannot interpret feed_dict key as Tensor: Can not convert a int into a Tensor.
+			'''
 			# Generate summary with the current batch of data and write to file
 			if step % display_step == 0:
 				s = sess.run(merged_summary, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1.})
