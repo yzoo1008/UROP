@@ -153,16 +153,7 @@ with tf.Session() as sess:
 
 			# And run the training op
 			sess.run(train_op, feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
-			'''
-			Traceback (most recent call last):
-			  File "run.py", line 155, in <module>
-			    sess.run(train_op, feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
-			  File "/usr/local/lib/python2.7/dist-packages/tensorflow/python/client/session.py", line 778, in run
-			    run_metadata_ptr)
-			  File "/usr/local/lib/python2.7/dist-packages/tensorflow/python/client/session.py", line 933, in _run
-			    + e.args[0])
-			TypeError: Cannot interpret feed_dict key as Tensor: Can not convert a int into a Tensor.
-			'''
+			
 			# Generate summary with the current batch of data and write to file
 			if step % display_step == 0:
 				s = sess.run(merged_summary, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1.})
