@@ -55,3 +55,8 @@ class DataSet:
 
 		#return array of images and labels
 		return images, masks
+
+
+	def reset_pointer(self):
+
+		self.pointer = 0
