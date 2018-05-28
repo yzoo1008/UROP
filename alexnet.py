@@ -22,32 +22,32 @@ class AlexNet(object):
 	def create(self):
 
 		# 1st Layer: Conv (w ReLu) -> Pool -> Lrn
-		conv1 = conv(self.X, 11, 11, 96, 4, 4, name='conv1')            # 512x512x3 -> 128x128x96
-		pool1 = max_pool(conv1, 3, 3, 2, 2, name='pool1')               # 128x128x96 -> 64x64x96
+		conv1 = conv(self.X, 11, 11, 96, 4, 4, name='conv1')                # 512x512x3 -> 128x128x96
+		pool1 = max_pool(conv1, 3, 3, 2, 2, name='pool1')                   # 128x128x96 -> 64x64x96
 		norm1 = lrn(pool1, 2, 2e-05, 0.75, name='norm1')
 
 		# 2nd Layer: Conv (w ReLu) -> Pool -> Lrn with 2 groups
-		conv2 = conv(norm1, 5, 5, 256, 1, 1, groups=2, name='conv2')    # 64x64x96 -> 64x64x256
-		pool2 = max_pool(conv2, 3, 3, 2, 2, name='pool2')               # 64x64x256 -> 32x32x256
+		conv2 = conv(norm1, 5, 5, 256, 1, 1, groups=2, name='conv2')        # 64x64x96 -> 64x64x256
+		pool2 = max_pool(conv2, 3, 3, 2, 2, name='pool2')                   # 64x64x256 -> 32x32x256
 		norm2 = lrn(pool2, 2, 2e-05, 0.75, name='norm2')
 
 		# 3rd Layer: Conv (w ReLu)
-		conv3 = conv(norm2, 3, 3, 384, 1, 1, name='conv3')              # 32x32x256 -> 32x32x384
+		conv3 = conv(norm2, 3, 3, 384, 1, 1, name='conv3')                  # 32x32x256 -> 32x32x384
 
 		# 4th Layer: Conv (w ReLu) splitted into two groups
-		conv4 = conv(conv3, 3, 3, 384, 1, 1, groups=2, name='conv4')    # 32x32x384 -> 32x32x384
+		conv4 = conv(conv3, 3, 3, 384, 1, 1, groups=2, name='conv4')        # 32x32x384 -> 32x32x384
 
 		# 5th Layer: Conv (w ReLu) -> Pool splitted into two groups
-		conv5 = conv(conv4, 3, 3, 256, 1, 1, groups=2, name='conv5')    # 32x32x256 -> 32x32x256
+		conv5 = conv(conv4, 3, 3, 256, 1, 1, groups=2, name='conv5')        # 32x32x256 -> 32x32x256
 
 		# 6th Layer: Conv (w ReLu)
-		conv6 = conv(conv5, 3, 3, 64, 1, 1, name='conv6')               # 32x32x256 -> 32x32x64
+		conv6 = conv(conv5, 3, 3, 64, 1, 1, name='conv6')                   # 32x32x256 -> 32x32x64
 
 		# 7th Layer: Conv (w ReLu)
-		conv7 = conv(conv6, 3, 3, 16, 1, 1, name='conv7')               # 32x32x64 -> 32x32x16
+		conv7 = conv(conv6, 3, 3, 16, 1, 1, name='conv7')                   # 32x32x64 -> 32x32x16
 
 		# 8th Layer: Conv (w ReLu)
-		self.conv8 = conv(conv7, 3, 3, 1, 1, 1, name='conv8')           # 32x32x16 -> 32x32x1
+		self.conv8 = conv(conv7, 3, 3, 1, 1, 1, relu=False, name='conv8')   # 32x32x16 -> 32x32x1
 
 
 	def load_initial_weights(self, session):
@@ -83,7 +83,7 @@ class AlexNet(object):
 
 
 
-def conv(x, filter_height, filter_width, num_filters, stride_y, stride_x, name, padding='SAME', groups=1):
+def conv(x, filter_height, filter_width, num_filters, stride_y, stride_x, name, relu=True, padding='SAME', groups=1):
 
 	# Get number of input channels
 	input_channels = int(x.get_shape()[-1])
@@ -112,10 +112,12 @@ def conv(x, filter_height, filter_width, num_filters, stride_y, stride_x, name, 
 		# Add biases
 		bias = tf.reshape(tf.nn.bias_add(conv, biases), conv.get_shape().as_list())
 
-		# Apply relu function
-		relu = tf.nn.relu(bias, name=scope.name)
+		if relu:
+			res = tf.nn.relu(bias, name=scope.name)
+		else:
+			res = tf.nn.tanh(bias, name=scope.name)
 
-		return relu
+		return res
 
 
 def fc(x, num_in, num_out, name, relu=True):
