@@ -66,7 +66,7 @@ for var in var_list:
 # Add the loss to summary
 tf.summary.scalar('cross_entropy', loss)
 
-x_threshold = tf.to_int32(score >= 0.5)
+x_threshold = tf.to_int32(score >= 0.3)
 y_threshold = tf.to_int32(y >= 1.)
 num_truth = tf.to_float(tf.reduce_sum(y_threshold))
 num_correct = tf.to_float(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
@@ -148,11 +148,11 @@ with tf.Session() as sess:
 		test_count = 0
 		for _ in range(test_batches_per_epoch):
 			batch_tx, batch_ty = test_generator.next_batch(batch_size)
-			rec, pre, num_truth, num_correct, num_predict = sess.run([recall, precision, num_truth, num_correct, num_predict], feed_dict={x: batch_tx, y: batch_ty, keep_prob: 1.})
+			rec, pre, truth, correct, predict = sess.run([recall, precision, num_truth, num_correct, num_predict], feed_dict={x: batch_tx, y: batch_ty, keep_prob: 1.})
 			test_rec += rec
 			test_pre += pre
 			test_count += 1
-			print("Num_Truth = {:.4f}\t Num_Correct = {:.4f}\t Num_Predict = {:.4f}\t".format(num_truth, num_correct, num_predict))
+			print("Num_Truth = {:.4f}\t Num_Correct = {:.4f}\t Num_Predict = {:.4f}\t".format(truth, correct, predict))
 		test_rec /= test_count
 		test_pre /= test_count
 		print("{} Test Recall = {:.4f}\t Precision = {:.4f}".format(datetime.now(), test_rec, test_pre))
