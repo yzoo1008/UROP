@@ -70,8 +70,8 @@ with tf.name_scope("recall"):
 	x_threshold = tf.to_int32(score >= 100.)
 	y_threshold = tf.to_int32(y >= 255.)
 
-	num_truth = tf.to_float32(tf.reduce_sum(y_threshold))
-	num_correct = tf.to_float32(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
+	num_truth = tf.to_float(tf.reduce_sum(y_threshold))
+	num_correct = tf.to_float(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
 
 	if num_truth == 0.:
 		recall = tf.constant(0., dtype = tf.float32)
@@ -82,8 +82,8 @@ with tf.name_scope("precision"):
 	x_threshold = tf.to_int32(score >= 100.)
 	y_threshold = tf.to_int32(y >= 255.)
 
-	num_correct = tf.to_float32(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
-	num_predict = tf.to_float32(tf.reduce_sum(x_threshold))
+	num_correct = tf.to_float(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
+	num_predict = tf.to_float(tf.reduce_sum(x_threshold))
 
 	if num_predict == 0.:
 		precision = tf.constant(0., dtype= tf.float32)
