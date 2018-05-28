@@ -17,6 +17,7 @@ for case in whole_ids:
 		label_path = "./data/labels/" + case + "/" + str(id) + ".txt"
 		label_info = open(label_path).read().splitlines()
 		mask = np.zeros((Y_out, X_out, 1))
+		mask = mask - 1
 		for info in label_info:
 			_, x_min, y_min, x_max, y_max = info.split(' ')
 			if float(x_max)>=2048:
@@ -28,15 +29,8 @@ for case in whole_ids:
 			x_max = int(math.floor(float(x_max)*X_out/X))
 			y_max = int(math.floor(float(y_max)*Y_out/Y))
 
-			for row in range(Y_out):
-				for col in range(X_out):
-					mask[row, col] = -1.
-					if y_max >= row >= y_min:
-						if x_max >= col >= x_min:
-							mask[row, col] = 1.
-
-#			for y in range(y_min, y_max+1):
-#				for x in range(x_min, x_max+1):
-#					mask[y, x] = 1
+			for y in range(y_min, y_max+1):
+				for x in range(x_min, x_max+1):
+					mask[y, x] = 1
 		np.save("./data/mask_npy/" + case + "/" + str(id), mask)
 
