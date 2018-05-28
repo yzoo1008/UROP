@@ -66,25 +66,19 @@ for var in var_list:
 # Add the loss to summary
 tf.summary.scalar('cross_entropy', loss)
 
+x_threshold = tf.to_int32(score >= 100.)
+y_threshold = tf.to_int32(y >= 255.)
+num_truth = tf.to_float(tf.reduce_sum(y_threshold))
+num_correct = tf.to_float(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
+num_predict = tf.to_float(tf.reduce_sum(x_threshold))
+
 with tf.name_scope("recall"):
-	x_threshold = tf.to_int32(score >= 100.)
-	y_threshold = tf.to_int32(y >= 255.)
-
-	num_truth = tf.to_float(tf.reduce_sum(y_threshold))
-	num_correct = tf.to_float(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
-
 	if num_truth == 0.:
 		recall = tf.constant(0., dtype = tf.float32)
 	else:
 		recall = tf.div(num_correct, num_truth)
 
 with tf.name_scope("precision"):
-	x_threshold = tf.to_int32(score >= 100.)
-	y_threshold = tf.to_int32(y >= 255.)
-
-	num_correct = tf.to_float(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
-	num_predict = tf.to_float(tf.reduce_sum(x_threshold))
-
 	if num_predict == 0.:
 		precision = tf.constant(0., dtype= tf.float32)
 	else:
@@ -154,10 +148,11 @@ with tf.Session() as sess:
 		test_count = 0
 		for _ in range(test_batches_per_epoch):
 			batch_tx, batch_ty = test_generator.next_batch(batch_size)
-			rec, pre = sess.run([recall, precision], feed_dict={x: batch_tx, y: batch_ty, keep_prob: 1.})
+			rec, pre, num_truth, num_correct, num_predict = sess.run([recall, precision, num_truth, num_correct, num_predict], feed_dict={x: batch_tx, y: batch_ty, keep_prob: 1.})
 			test_rec += rec
 			test_pre += pre
 			test_count += 1
+			print("Num_Truth = {:.4f}\t Num_Correct = {:.4f}\t Num_Predict = {:.4f}\t".format(num_truth, num_correct, num_predict))
 		test_rec /= test_count
 		test_pre /= test_count
 		print("{} Test Recall = {:.4f}\t Precision = {:.4f}".format(datetime.now(), test_rec, test_pre))
