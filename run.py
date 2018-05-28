@@ -67,42 +67,28 @@ for var in var_list:
 tf.summary.scalar('cross_entropy', loss)
 
 with tf.name_scope("recall"):
-	num_correct = 0
-	num_truth = 0
 	x_threshold = tf.to_int32(score >= 100.)
 	y_threshold = tf.to_int32(y >= 255.)
 
-	for i in range(batch_size):
-		for row in range(32):
-			for col in range(32):
-				if y_threshold[i][row][col] == 1:
-					num_truth += 1
-					if x_threshold[i][row][col] == 1:
-						num_correct += 1
+	num_truth = tf.to_float32(tf.reduce_sum(y_threshold))
+	num_correct = tf.to_float32(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
 
-	if num_truth == 0:
-		recall = 0
+	if num_truth == 0.:
+		recall = tf.constant(0., dtype = tf.float32)
 	else:
-		recall = num_correct/num_truth
+		recall = tf.div(num_correct, num_truth)
 
 with tf.name_scope("precision"):
-	num_correct = 0
-	num_pred = 0
 	x_threshold = tf.to_int32(score >= 100.)
 	y_threshold = tf.to_int32(y >= 255.)
 
-	for i in range(batch_size):
-		for row in range(32):
-			for col in range(32):
-				if x_threshold[i][row][col] == 1:
-					num_pred += 1
-					if y_threshold[i][row][col] == 1:
-						num_correct += 1
+	num_correct = tf.to_float32(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
+	num_predict = tf.to_float32(tf.reduce_sum(x_threshold))
 
-	if num_pred == 0:
-		precision = 0
+	if num_predict == 0.:
+		precision = tf.constant(0., dtype= tf.float32)
 	else:
-		precision = num_correct/num_pred
+		precision = tf.div(num_correct, num_predict)
 
 
 tf.summary.scalar('recall', recall)
@@ -153,7 +139,7 @@ with tf.Session() as sess:
 
 			# And run the training op
 			sess.run(train_op, feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
-			
+
 			# Generate summary with the current batch of data and write to file
 			if step % display_step == 0:
 				s = sess.run(merged_summary, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1.})
