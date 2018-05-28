@@ -73,16 +73,10 @@ num_correct = tf.to_float(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
 num_predict = tf.to_float(tf.reduce_sum(x_threshold))
 
 with tf.name_scope("recall"):
-	if num_truth == 0.:
-		recall = tf.constant(0., dtype = tf.float32)
-	else:
-		recall = tf.div(num_correct, num_truth)
+	recall = tf.cond(num_truth == 0., lambda: tf.constant(0., dtype = tf.float32), lambda: tf.div(num_correct, num_truth))
 
 with tf.name_scope("precision"):
-	if num_predict == 0.:
-		precision = tf.constant(0., dtype= tf.float32)
-	else:
-		precision = tf.div(num_correct, num_predict)
+	precision = tf.cond(num_predict == 0., lambda: tf.constant(0., dtype = tf.float32), lambda: tf.div(num_correct, num_predict))
 
 
 tf.summary.scalar('recall', recall)
