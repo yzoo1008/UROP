@@ -38,7 +38,7 @@ class AlexNet(object):
 		conv4 = conv(conv3, 3, 3, 384, 1, 1, groups=2, name='conv4')        # 32x32x384 -> 32x32x384
 
 		# 5th Layer: Conv (w ReLu) -> Pool splitted into two groups
-		conv5 = conv(conv4, 3, 3, 256, 1, 1, groups=2, name='conv5')        # 32x32x256 -> 32x32x256
+		conv5 = conv(conv4, 3, 3, 256, 1, 1, groups=2, name='conv5')        # 32x32x384 -> 32x32x256
 
 		# 6th Layer: Conv (w ReLu)
 		conv6 = conv(conv5, 3, 3, 64, 1, 1, name='conv6')                   # 32x32x256 -> 32x32x64
