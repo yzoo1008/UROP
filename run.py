@@ -44,11 +44,12 @@ ground_truth_true = tf.to_int32(y >= 1.)
 ground_truth_false = tf.to_int32(y <= -1.)
 num_ground_truth_true = tf.to_float(tf.reduce_sum(ground_truth_true))
 num_ground_truth_false = tf.to_float(tf.reduce_sum(ground_truth_false))
-weight = tf.sqrt(tf.div(num_ground_truth_false, num_ground_truth_true))
-weight_map = tf.multiply(weight, tf.to_float(ground_truth_true))
+weight_t = tf.sqrt(tf.sqrt(tf.div(num_ground_truth_false, num_ground_truth_true)))
+weight_t_map = tf.multiply(weight_t, tf.to_float(ground_truth_true))
+
 
 with tf.name_scope("cross_ent"):
-	loss = tf.reduce_mean(tf.multiply(weight_map, tf.square(score - y)))
+	loss = tf.reduce_mean(tf.multiply(weight_t_map, tf.square(score - y)))
 #	loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=score, labels=y))
 
 # Train op
