@@ -44,7 +44,7 @@ ground_truth_true = tf.to_int32(y >= 1.)
 ground_truth_false = tf.to_int32(y <= -1.)
 num_ground_truth_true = tf.to_float(tf.reduce_sum(ground_truth_true))
 num_ground_truth_false = tf.to_float(tf.reduce_sum(ground_truth_false))
-weight = tf.div(num_ground_truth_false, num_ground_truth_true)
+weight = tf.sqrt(tf.div(num_ground_truth_false, num_ground_truth_true))
 weight_map = tf.multiply(weight, tf.to_float(ground_truth_true))
 
 with tf.name_scope("cross_ent"):
