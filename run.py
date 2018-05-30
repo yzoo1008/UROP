@@ -133,7 +133,8 @@ with tf.Session() as sess:
 			batch_xs, batch_ys = train_generator.next_batch(batch_size)
 
 			# And run the training op
-			sess.run(train_op, feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
+			nt,nc, np, _=sess.run([num_truth, num_correct, num_predict, train_op], feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
+			print("Truth = {:.4f}\t Correct = {:.4f}\t Predict = {:.4f}".format(nt, nc, np))
 
 			# Generate summary with the current batch of data and write to file
 			if step % display_step == 0:
