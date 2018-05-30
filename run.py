@@ -48,7 +48,7 @@ weight = tf.div(num_ground_truth_false, num_ground_truth_true)
 weight_map = tf.multiply(weight, tf.to_float(ground_truth_true))
 
 with tf.name_scope("cross_ent"):
-	loss = tf.reduce_mean(tf.multiply(weight_func, tf.square(score - y)))
+	loss = tf.reduce_mean(tf.multiply(weight_map, tf.square(score - y)))
 #	loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=score, labels=y))
 
 # Train op
