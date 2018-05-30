@@ -40,8 +40,14 @@ score = model.conv8
 var_list = [v for v in tf.trainable_variables() if v.name.split('/')[0] in train_layers]
 
 # Op for calculating the loss
+ground_truth_true = tf.to_int32(y >= 1.)
+ground_truth_false = tf.to_int32(y <= -1.)
+num_ground_truth_true = tf.float32(tf.reduce_sum(ground_truth_true))
+num_ground_truth_false = tf.float32(tf.reduce_sum(ground_truth_false))
+weight_func = tf.multiply(tf.div(num_ground_truth_false, num_ground_truth_true), ground_truth_true)
+
 with tf.name_scope("cross_ent"):
-	loss = tf.reduce_mean(tf.square(score - y))
+	loss = tf.reduce_mean(tf.multiply(weight_func, tf.square(score - y)))
 #	loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=score, labels=y))
 
 # Train op
@@ -65,7 +71,7 @@ for var in var_list:
 # Add the loss to summary
 tf.summary.scalar('cross_entropy', loss)
 
-x_threshold = tf.to_int32(score <= 0.)
+x_threshold = tf.to_int32(score >= 0.4)
 y_threshold = tf.to_int32(y >= 1.)
 num_truth = tf.to_float(tf.reduce_sum(y_threshold))
 num_correct = tf.to_float(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
