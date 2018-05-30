@@ -44,7 +44,8 @@ ground_truth_true = tf.to_int32(y >= 1.)
 ground_truth_false = tf.to_int32(y <= -1.)
 num_ground_truth_true = tf.to_float(tf.reduce_sum(ground_truth_true))
 num_ground_truth_false = tf.to_float(tf.reduce_sum(ground_truth_false))
-weight_func = tf.multiply(tf.div(num_ground_truth_false, num_ground_truth_true), tf.to_float(ground_truth_true))
+weight = tf.div(num_ground_truth_false, num_ground_truth_true)
+weight_map = tf.multiply(weight, tf.to_float(ground_truth_true))
 
 with tf.name_scope("cross_ent"):
 	loss = tf.reduce_mean(tf.multiply(weight_func, tf.square(score - y)))
@@ -71,7 +72,7 @@ for var in var_list:
 # Add the loss to summary
 tf.summary.scalar('cross_entropy', loss)
 
-x_threshold = tf.to_int32(score >= 0.4)
+x_threshold = tf.to_int32(score >= 0.7)
 y_threshold = tf.to_int32(y >= 1.)
 num_truth = tf.to_float(tf.reduce_sum(y_threshold))
 num_correct = tf.to_float(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
@@ -147,11 +148,11 @@ with tf.Session() as sess:
 		test_count = 0
 		for _ in range(test_batches_per_epoch):
 			batch_tx, batch_ty = test_generator.next_batch(batch_size)
-			rec, pre, truth, correct, predict = sess.run([recall, precision, num_truth, num_correct, num_predict], feed_dict={x: batch_tx, y: batch_ty, keep_prob: 1.})
+			rec, pre, truth, correct, predict, g_true, g_false, g_weight = sess.run([recall, precision, num_truth, num_correct, num_predict, num_ground_truth_true, num_ground_truth_false, weight], feed_dict={x: batch_tx, y: batch_ty, keep_prob: 1.})
 			test_rec += rec
 			test_pre += pre
 			test_count += 1
-			print("Num_Truth = {:.4f}\t Num_Correct = {:.4f}\t Num_Predict = {:.4f}\t".format(truth, correct, predict))
+			print("Truth = {:.4f}\t Correct = {:.4f}\t Predict = {:.4f}\t Ture = {:.4f}\t False = {:.4f}\t weight = {:.4f}".format(truth, correct, predict, g_true, g_false, g_weight))
 		test_rec /= test_count
 		test_pre /= test_count
 		print("{} Test Recall = {:.4f}\t Precision = {:.4f}".format(datetime.now(), test_rec, test_pre))
