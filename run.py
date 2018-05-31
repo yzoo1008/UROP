@@ -152,7 +152,8 @@ with tf.Session() as sess:
 			batch_xs, batch_ys = train_generator.next_batch(batch_size)
 
 			# And run the training op
-			sess.run(train_op, feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
+			n_t, n_c, n_p, _ = sess.run(num_truth, num_correct, num_predict, train_op, feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
+			print("{:,4f}/{:.4f}\t {:.4f}\t{:.4f}\t{:.4f}".format(step, train_batches_per_epoch, n_t, n_c, n_p))
 
 			# # Generate summary with the current batch of data and write to file
 			# if step % display_step == 0:
