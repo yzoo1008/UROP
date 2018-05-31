@@ -166,11 +166,11 @@ with tf.Session() as sess:
 		test_count = 0
 		for _ in range(test_batches_per_epoch):
 			batch_tx, batch_ty = test_generator.next_batch(batch_size)
-			rec, pre, truth, correct, predict, g_true, g_false, g_weight = sess.run([recall, precision, num_truth, num_correct, num_predict, num_ground_truth_true, num_ground_truth_false, weight], feed_dict={x: batch_tx, y: batch_ty, keep_prob: 1.})
+			rec, pre, truth, correct, predict, g_true, g_false = sess.run([recall, precision, num_truth, num_correct, num_predict, num_ground_truth_true, num_ground_truth_false], feed_dict={x: batch_tx, y: batch_ty, keep_prob: 1.})
 			test_rec += rec
 			test_pre += pre
 			test_count += 1
-			print("Truth = {:.4f}\t Correct = {:.4f}\t Predict = {:.4f}\t Ture = {:.4f}\t False = {:.4f}\t weight = {:.4f}".format(truth, correct, predict, g_true, g_false, g_weight))
+			print("Truth = {:.4f}\t Correct = {:.4f}\t Predict = {:.4f}\t Ture = {:.4f}\t False = {:.4f}\t weight = {:.4f}".format(truth, correct, predict, g_true, g_false))
 		test_rec /= test_count
 		test_pre /= test_count
 		print("{} Test Recall = {:.4f}\t Precision = {:.4f}".format(datetime.now(), test_rec, test_pre))
