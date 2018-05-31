@@ -63,11 +63,13 @@ y_false = tf.multiply(ground_truth_false, random_pick)
 y_total = tf.add(y_false, ground_truth_true)
 
 with tf.name_scope("cross_ent"):
-	# 1)
-#	loss = tf.reduce_mean(tf.multiply(weight_t_map, tf.square(score - y)))
-	# 2)
-	loss = tf.div(tf.reduce_sum(tf.square(score_total - y_total)),
-	              tf.reduce_sum(tf.add(random_pick, ground_truth_true)))
+	# default)
+	loss = tf.reduce_mean(tf.reduce_sum(tf.square(score-y)))
+	#  1)
+	# loss = tf.reduce_mean(tf.multiply(weight_t_map, tf.square(score - y)))
+	#  2)
+	# loss = tf.div(tf.reduce_sum(tf.square(score_total - y_total)),
+	#               tf.reduce_sum(tf.add(random_pick, ground_truth_true)))
 
 # Train op
 with tf.name_scope("train"):
