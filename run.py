@@ -75,7 +75,7 @@ with tf.name_scope("cross_ent"):
 with tf.name_scope("train"):
 	# Get gradients of all trainable variables
 	gradients = tf.gradients(loss, var_list)
-#	gradients = list(zip(gradients, var_list))
+	gradients = list(zip(gradients, var_list))
 
 	# Create optimizer and apply gradient descent to the trainable variables
 	optimizer = tf.train.GradientDescentOptimizer(learning_rate)
@@ -92,7 +92,7 @@ for var in var_list:
 # Add the loss to summary
 tf.summary.scalar('cross_entropy', loss)
 
-x_threshold = tf.to_int32(score >= 0.95)
+x_threshold = tf.to_int32(score >= 1.)
 y_threshold = tf.to_int32(y >= 1.)
 num_truth = tf.to_float(tf.reduce_sum(y_threshold))
 num_correct = tf.to_float(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
