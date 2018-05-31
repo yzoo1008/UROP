@@ -154,12 +154,12 @@ with tf.Session() as sess:
 			# And run the training op
 			sess.run(train_op, feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
 
-			# Generate summary with the current batch of data and write to file
-			if step % display_step == 0:
-				s = sess.run(merged_summary, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1.})
-				writer.add_summary(s, epoch * train_batches_per_epoch + step)
-
-			step += 1
+			# # Generate summary with the current batch of data and write to file
+			# if step % display_step == 0:
+			# 	s = sess.run(merged_summary, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1.})
+			# 	writer.add_summary(s, epoch * train_batches_per_epoch + step)
+			#
+			# step += 1
 
 		# Test the model on the entire test set
 		print("{} Start test".format(datetime.now()))
