@@ -90,7 +90,7 @@ for var in var_list:
 # Add the loss to summary
 tf.summary.scalar('cross_entropy', loss)
 
-x_threshold = tf.to_int32(score >= 0.7)
+x_threshold = tf.to_int32(score >= 0.95)
 y_threshold = tf.to_int32(y >= 1.)
 num_truth = tf.to_float(tf.reduce_sum(y_threshold))
 num_correct = tf.to_float(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
