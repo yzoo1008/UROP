@@ -170,7 +170,7 @@ with tf.Session() as sess:
 			test_rec += rec
 			test_pre += pre
 			test_count += 1
-			print("Truth = {:.4f}\t Correct = {:.4f}\t Predict = {:.4f}\t Ture = {:.4f}\t False = {:.4f}\t weight = {:.4f}".format(truth, correct, predict, g_true, g_false))
+			print("Truth = {:.4f}\t Correct = {:.4f}\t Predict = {:.4f}\t Ture = {:.4f}\t False = {:.4f}".format(truth, correct, predict, g_true, g_false))
 		test_rec /= test_count
 		test_pre /= test_count
 		print("{} Test Recall = {:.4f}\t Precision = {:.4f}".format(datetime.now(), test_rec, test_pre))
