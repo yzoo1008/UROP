@@ -13,8 +13,7 @@ batch_size = 32
 
 # Network params
 dropout_rate = 0.5
-#train_layers = ['conv1', 'pool1', 'norm1', 'conv2', 'pool2', 'norm2', 'conv3', 'conv4', 'conv5', 'conv6', 'conv7', 'conv8']
-train_layers = []
+train_layers = ['conv1', 'pool1', 'norm1', 'conv2', 'pool2', 'norm2', 'conv3', 'conv4', 'conv5', 'conv6', 'conv7', 'conv8']
 
 # How often we want to write the tf.summary data to disk
 display_step = 1
@@ -76,7 +75,7 @@ with tf.name_scope("cross_ent"):
 with tf.name_scope("train"):
 	# Get gradients of all trainable variables
 	gradients = tf.gradients(loss, var_list)
-	gradients = list(zip(gradients, var_list))
+#	gradients = list(zip(gradients, var_list))
 
 	# Create optimizer and apply gradient descent to the trainable variables
 	optimizer = tf.train.GradientDescentOptimizer(learning_rate)
