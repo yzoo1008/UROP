@@ -7,13 +7,14 @@ from dataset import DataSet
 
 
 # Learning params
-learning_rate = 0.0009
+learning_rate = 0.01
 num_epochs = 10
 batch_size = 32
 
 # Network params
 dropout_rate = 0.5
-train_layers = ['conv1', 'pool1', 'norm1', 'conv2', 'pool2', 'norm2', 'conv3', 'conv4', 'conv5', 'conv6', 'conv7', 'conv8']
+#train_layers = ['conv1', 'pool1', 'norm1', 'conv2', 'pool2', 'norm2', 'conv3', 'conv4', 'conv5', 'conv6', 'conv7', 'conv8']
+train_layers = []
 
 # How often we want to write the tf.summary data to disk
 display_step = 1
