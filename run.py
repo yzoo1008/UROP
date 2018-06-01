@@ -7,7 +7,7 @@ from dataset import DataSet
 
 
 # Learning params
-learning_rate = 0.001
+learning_rate = 0.01
 num_epochs = 10
 batch_size = 32
 
@@ -48,7 +48,7 @@ num_ground_truth_false = tf.reduce_sum(ground_truth_false)
 
 # 1)
 weight_t = tf.div(num_ground_truth_false, num_ground_truth_true)
-weight_t_map = tf.multiply(weight_t, tf.to_float(ground_truth_true))
+weight_t_map = tf.multiply(weight_t, ground_truth_true)
 se = tf.square(score - y)
 compensate_true = tf.multiply(weight_t_map, se)
 f_map = tf.multiply(ground_truth_false, se)
@@ -71,8 +71,7 @@ with tf.name_scope("cross_ent"):
 	#  1)
 	loss = tf.reduce_sum(tf.add(compensate_true, f_map))
 	#  2)
-	# loss = tf.div(tf.reduce_sum(tf.square(score_total - y_total)),
-	#               tf.reduce_sum(tf.add(random_pick, ground_truth_true)))
+	# loss = tf.reduce_sum(tf.square(score_total - y_total))
 
 # Train op
 with tf.name_scope("train"):
