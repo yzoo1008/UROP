@@ -34,6 +34,7 @@ train_size = train_generator.data_size
 x = tf.placeholder(tf.float32, [batch_size, 512, 512, 3])
 y = tf.placeholder(tf.float32, [None, 32, 32, 1])
 keep_prob = tf.placeholder(tf.float32)
+batch_step = tf.placeholder(tf.int32)
 
 # Initialize model
 model = AlexNet(x, keep_prob, train_layers)
@@ -85,8 +86,7 @@ with tf.name_scope("train"):
 	gradients = list(zip(gradients, var_list))
 
 	# Create optimizer and apply gradient descent to the trainable variables
-	batch = tf.Variable(0)
-	learning_rate = tf.train.exponential_decay(initial_learning_rate, batch*batch_size, train_size,  0.9, staircase=True)
+	learning_rate = tf.train.exponential_decay(initial_learning_rate, batch_step*batch_size, train_size,  0.9, staircase=True)
 	optimizer = tf.train.GradientDescentOptimizer(learning_rate)
 	train_op = optimizer.apply_gradients(grads_and_vars=gradients)
 
@@ -148,6 +148,7 @@ with tf.Session() as sess:
 	print("{} Start training...".format(datetime.now()))
 	print("{} Open Tensorboard at --logdir {}".format(datetime.now(), filewriter_path))
 
+	total_step = 1
 	# Loop over number of epochs
 	for epoch in range(num_epochs):
 
@@ -161,8 +162,10 @@ with tf.Session() as sess:
 			batch_xs, batch_ys = train_generator.next_batch(batch_size)
 
 			# And run the training op
-			n_t, n_c, n_p, n_f, cost, lr, _ = sess.run([num_truth, num_correct, num_predict, num_false, loss, learning_rate, train_op], feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
-			print("{:.0f}/{:.0f}\tT: {:.4f}\tC: {:.4f}\tP: {:.4f}\tF: {:.4f}\tLoss: {:.4f}\tLr: {:.4f}".format(step, train_batches_per_epoch, n_t, n_c, n_p, n_f, cost, lr))
+			n_t, n_c, n_p, n_f, cost, lr, _ = sess.run([num_truth, num_correct, num_predict, num_false, loss, learning_rate, train_op],
+			                                           feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate, batch_step: total_step})
+			print("{:.0f}/{:.0f}\tT: {:.4f}\tC: {:.4f}\tP: {:.4f}\tF: {:.4f}\tLoss: {:.4f}\tLr: {:.4f}"
+			      .format(step, train_batches_per_epoch, n_t, n_c, n_p, n_f, cost, lr))
 
 			# # Generate summary with the current batch of data and write to file
 			# if step % display_step == 0:
@@ -170,7 +173,7 @@ with tf.Session() as sess:
 			# 	writer.add_summary(s, epoch * train_batches_per_epoch + step)
 
 			step += 1
-			batch += 1
+			total_step += 1
 
 		# Test the model on the entire test set
 		print("{} Start test".format(datetime.now()))
