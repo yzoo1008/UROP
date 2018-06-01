@@ -162,7 +162,7 @@ with tf.Session() as sess:
 
 			# And run the training op
 			n_t, n_c, n_p, n_f, cost, lr, _ = sess.run([num_truth, num_correct, num_predict, num_false, loss, learning_rate, train_op], feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
-			print("{:.0f}/{:.0f}\tT: {:.4f}\tC: {:.4f}\tP: {:.4f}\tF: {:.4f}\tLoss: {}\tLr: {}".format(step, train_batches_per_epoch, n_t, n_c, n_p, n_f, cost, lr))
+			print("{:.0f}/{:.0f}\tT: {:.4f}\tC: {:.4f}\tP: {:.4f}\tF: {:.4f}\tLoss: {:.4f}\tLr: {:.4f}".format(step, train_batches_per_epoch, n_t, n_c, n_p, n_f, cost, lr))
 
 			# # Generate summary with the current batch of data and write to file
 			# if step % display_step == 0:
@@ -170,6 +170,7 @@ with tf.Session() as sess:
 			# 	writer.add_summary(s, epoch * train_batches_per_epoch + step)
 
 			step += 1
+			batch += 1
 
 		# Test the model on the entire test set
 		print("{} Start test".format(datetime.now()))
