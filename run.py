@@ -7,7 +7,7 @@ from dataset import DataSet
 
 
 # Learning params
-learning_rate = 0.0000001
+learning_rate = 0.0001
 num_epochs = 10
 batch_size = 32
 
@@ -47,7 +47,7 @@ num_ground_truth_true = tf.reduce_sum(ground_truth_true)
 num_ground_truth_false = tf.reduce_sum(ground_truth_false)
 
 # 1)
-weight_t = tf.sqrt(tf.div(num_ground_truth_false, num_ground_truth_true))
+weight_t = tf.div(num_ground_truth_false, num_ground_truth_true)
 weight_t_map = tf.multiply(weight_t, tf.to_float(ground_truth_true))
 
 # 2)
@@ -100,6 +100,7 @@ y_threshold = tf.to_int32(y >= 1.)
 num_truth = tf.to_float(tf.reduce_sum(y_threshold))
 num_correct = tf.to_float(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
 num_predict = tf.to_float(tf.reduce_sum(x_threshold))
+num_false = tf.to_float(tf.reduce_sum(tf.to_int32(y <= -1.)))
 
 with tf.name_scope("recall"):
 	recall = tf.cond(num_truth > 0., lambda: tf.div(num_correct, num_truth), lambda: tf.constant(0., dtype = tf.float32))
@@ -155,8 +156,8 @@ with tf.Session() as sess:
 			batch_xs, batch_ys = train_generator.next_batch(batch_size)
 
 			# And run the training op
-			n_t, n_c, n_p, cost, _ = sess.run([num_truth, num_correct, num_predict, loss, train_op], feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
-			print("{:.4f}/{:.4f}\t {:.4f}\t{:.4f}\t{:.4f}\t Loss: {}".format(step, train_batches_per_epoch, n_t, n_c, n_p, cost))
+			n_t, n_c, n_p, n_f, cost, _ = sess.run([num_truth, num_correct, num_predict, num_false, loss, train_op], feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
+			print("{:.0f}/{:.0f}\tT: {:.4f}\tC: {:.4f}\tP: {:.4f}\tF: {:.4f}\tLoss: {}".format(step, train_batches_per_epoch, n_t, n_c, n_p, n_f, cost))
 
 			# # Generate summary with the current batch of data and write to file
 			# if step % display_step == 0:
