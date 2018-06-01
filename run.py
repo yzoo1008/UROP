@@ -66,7 +66,7 @@ with tf.name_scope("cross_ent"):
 	# default)
 	# loss = tf.reduce_mean(tf.reduce_sum(tf.square(score-y)))
 	#  1)
-	loss = tf.div(tf.multiply(weight_t_map, tf.square(score - y)), tf.add(num_ground_truth_false, num_ground_truth_false))
+	loss = tf.div(tf.reduce_sum(tf.multiply(weight_t_map, tf.square(score - y))), tf.add(num_ground_truth_false, num_ground_truth_false))
 	#  2)
 	# loss = tf.div(tf.reduce_sum(tf.square(score_total - y_total)),
 	#               tf.reduce_sum(tf.add(random_pick, ground_truth_true)))
