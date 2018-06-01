@@ -49,6 +49,9 @@ num_ground_truth_false = tf.reduce_sum(ground_truth_false)
 # 1)
 weight_t = tf.div(num_ground_truth_false, num_ground_truth_true)
 weight_t_map = tf.multiply(weight_t, tf.to_float(ground_truth_true))
+se = tf.square(score - y)
+compensate_true = tf.multiply(weight_t_map, se)
+f_map = tf.multiply(ground_truth_false, se)
 
 # 2)
 ground_truth_true_reshape = tf.reshape(ground_truth_true, [-1])
@@ -66,7 +69,7 @@ with tf.name_scope("cross_ent"):
 	# default)
 	# loss = tf.reduce_mean(tf.reduce_sum(tf.square(score-y)))
 	#  1)
-	loss = tf.reduce_sum(tf.multiply(weight_t_map, tf.square(score - y)))
+	loss = tf.reduce_sum(tf.add(compensate_true, f_map))
 	#  2)
 	# loss = tf.div(tf.reduce_sum(tf.square(score_total - y_total)),
 	#               tf.reduce_sum(tf.add(random_pick, ground_truth_true)))
