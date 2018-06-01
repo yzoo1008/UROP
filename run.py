@@ -7,7 +7,7 @@ from dataset import DataSet
 
 
 # Learning params
-learning_rate = 0.01
+initial_learning_rate = 0.01
 num_epochs = 10
 batch_size = 32
 
@@ -24,6 +24,11 @@ checkpoint_path = "./tf_board/"
 
 # Create parent path if it doesn't exist
 if not os.path.isdir(checkpoint_path): os.mkdir(checkpoint_path)
+
+# Initalize the data generator seperately for the train and test set
+train_generator = DataSet(mode='train')
+test_generator = DataSet(mode='test')
+train_size = train_generator.data_size
 
 # TF placeholder for graph input and output
 x = tf.placeholder(tf.float32, [batch_size, 512, 512, 3])
@@ -80,6 +85,8 @@ with tf.name_scope("train"):
 	gradients = list(zip(gradients, var_list))
 
 	# Create optimizer and apply gradient descent to the trainable variables
+	batch = tf.Variable(0)
+	learning_rate = tf.train.exponential_decay(initial_learning_rate, batch*batch_size, train_size,  0.9, staircase=True)
 	optimizer = tf.train.GradientDescentOptimizer(learning_rate)
 	train_op = optimizer.apply_gradients(grads_and_vars=gradients)
 
@@ -123,10 +130,6 @@ writer = tf.summary.FileWriter(filewriter_path)
 # Initialize an saver for store model checkpoints
 saver = tf.train.Saver()
 
-# Initalize the data generator seperately for the train and test set
-train_generator = DataSet(mode='train')
-test_generator = DataSet(mode='test')
-
 # Get the number of train/test steps per epoch
 train_batches_per_epoch = np.floor(train_generator.data_size / batch_size).astype(np.int16)
 test_batches_per_epoch = np.floor(test_generator.data_size / batch_size).astype(np.int16)
@@ -158,8 +161,8 @@ with tf.Session() as sess:
 			batch_xs, batch_ys = train_generator.next_batch(batch_size)
 
 			# And run the training op
-			n_t, n_c, n_p, n_f, cost, _ = sess.run([num_truth, num_correct, num_predict, num_false, loss, train_op], feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
-			print("{:.0f}/{:.0f}\tT: {:.4f}\tC: {:.4f}\tP: {:.4f}\tF: {:.4f}\tLoss: {}".format(step, train_batches_per_epoch, n_t, n_c, n_p, n_f, cost))
+			n_t, n_c, n_p, n_f, cost, lr, _ = sess.run([num_truth, num_correct, num_predict, num_false, loss, learning_rate, train_op], feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
+			print("{:.0f}/{:.0f}\tT: {:.4f}\tC: {:.4f}\tP: {:.4f}\tF: {:.4f}\tLoss: {}\tLr: {}".format(step, train_batches_per_epoch, n_t, n_c, n_p, n_f, cost, lr))
 
 			# # Generate summary with the current batch of data and write to file
 			# if step % display_step == 0:
