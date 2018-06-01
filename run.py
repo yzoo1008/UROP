@@ -92,7 +92,7 @@ for var in var_list:
 # Add the loss to summary
 tf.summary.scalar('cross_entropy', loss)
 
-x_threshold = tf.to_int32(score >= 1.)
+x_threshold = tf.to_int32(score >= 0.4)
 y_threshold = tf.to_int32(y >= 1.)
 num_truth = tf.to_float(tf.reduce_sum(y_threshold))
 num_correct = tf.to_float(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
@@ -159,8 +159,8 @@ with tf.Session() as sess:
 			# if step % display_step == 0:
 			# 	s = sess.run(merged_summary, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1.})
 			# 	writer.add_summary(s, epoch * train_batches_per_epoch + step)
-			#
-			# step += 1
+
+			step += 1
 
 		# Test the model on the entire test set
 		print("{} Start test".format(datetime.now()))
