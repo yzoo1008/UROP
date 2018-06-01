@@ -7,7 +7,7 @@ from dataset import DataSet
 
 
 # Learning params
-learning_rate = 0.00001
+learning_rate = 0.0000001
 num_epochs = 10
 batch_size = 32
 
