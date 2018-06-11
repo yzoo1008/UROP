@@ -103,6 +103,7 @@ for var in var_list:
 
 # Add the loss to summary
 tf.summary.scalar('cross_entropy', loss)
+tf.summary.scalar('learning_rate', learning_rate)
 
 x_threshold = tf.to_int32(score >= 0.6)
 y_threshold = tf.to_int32(y >= 1.)
