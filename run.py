@@ -7,7 +7,7 @@ from dataset import DataSet
 
 
 # Learning params
-initial_learning_rate = 0.000001
+initial_learning_rate = 0.0000005
 num_epochs = 10
 batch_size = 32
 
@@ -59,10 +59,6 @@ se = tf.square(score - y)
 compensate_true = tf.multiply(weight_t_map, se)
 f_map = tf.multiply(ground_truth_false, se)
 
-check1 = tf.add(ground_truth_false, ground_truth_true)
-check2 = tf.reduce_sum(check1)
-
-
 # 2)
 ground_truth_true_reshape = tf.reshape(ground_truth_true, [-1])
 shuffle= tf.random_shuffle(ground_truth_true_reshape)
@@ -90,7 +86,7 @@ with tf.name_scope("train"):
 	gradients = list(zip(gradients, var_list))
 
 	# Create optimizer and apply gradient descent to the trainable variables
-	learning_rate = tf.train.exponential_decay(initial_learning_rate, batch_step*batch_size, train_size,  0.9, staircase=True)
+	learning_rate = tf.train.exponential_decay(initial_learning_rate, batch_step*batch_size, train_size,  0.95, staircase=True)
 	# optimizer = tf.train.GradientDescentOptimizer(learning_rate)
 	# train_op = optimizer.apply_gradients(grads_and_vars=gradients)
 
@@ -108,7 +104,7 @@ for var in var_list:
 # Add the loss to summary
 tf.summary.scalar('cross_entropy', loss)
 
-x_threshold = tf.to_int32(score >= 0.7)
+x_threshold = tf.to_int32(score >= 0.6)
 y_threshold = tf.to_int32(y >= 1.)
 num_truth = tf.to_float(tf.reduce_sum(y_threshold))
 num_correct = tf.to_float(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
@@ -166,10 +162,10 @@ with tf.Session() as sess:
 			batch_xs, batch_ys = train_generator.next_batch(batch_size)
 
 			# And run the training op
-			c2, n_t, n_c, n_p, n_f, cost, lr, _ = sess.run([check2, num_truth, num_correct, num_predict, num_false, loss, learning_rate, train_op],
+			n_t, n_c, n_p, n_f, cost, lr, _ = sess.run([num_truth, num_correct, num_predict, num_false, loss, learning_rate, train_op],
 			                                           feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate, batch_step: total_step})
-			print("{:.0f}/{:.0f}\tT: {:.4f}\tC: {:.4f}\tP: {:.4f}\tF: {:.4f}\tLoss: {:.4f}\tLr: {:.4f}\t {:.2f}"
-			      .format(step, train_batches_per_epoch, n_t, n_c, n_p, n_f, cost, lr, c2))
+			print("{:.0f}/{:.0f}epoch\t{:.0f}/{:.0f}step\tTrue: {:.0f}\tCorrect: {:.0f}\tPredict: {:.0f}\tFalse: {:.0f}\tLoss: {:.5f}\tLr: {:.4f}"
+			      .format(epoch, num_epochs, step, train_batches_per_epoch, n_t, n_c, n_p, n_f, cost, lr))
 
 			# Generate summary with the current batch of data and write to file
 			if step % display_step == 0:
