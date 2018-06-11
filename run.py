@@ -7,8 +7,8 @@ from dataset import DataSet
 
 
 # Learning params
-initial_learning_rate = 0.0000001
-num_epochs = 10
+initial_learning_rate = 0.0000005
+num_epochs = 20
 batch_size = 32
 
 # Network params
@@ -86,7 +86,7 @@ with tf.name_scope("train"):
 	gradients = list(zip(gradients, var_list))
 
 	# Create optimizer and apply gradient descent to the trainable variables
-	learning_rate = tf.train.exponential_decay(initial_learning_rate, batch_step*batch_size, train_size,  0.9, staircase=True)
+	learning_rate = tf.train.exponential_decay(initial_learning_rate, batch_step*batch_size, train_size, 0.9, staircase=True)
 	# optimizer = tf.train.GradientDescentOptimizer(learning_rate)
 	# train_op = optimizer.apply_gradients(grads_and_vars=gradients)
 
@@ -185,7 +185,7 @@ with tf.Session() as sess:
 			test_rec += rec
 			test_pre += pre
 			test_count += 1
-			print("True = {:.4f}\t Correct = {:.4f}\t Predict = {:.4f}".format(truth, correct, predict))
+			print("True: {:.0f}\t Corr: {:.0f}\t Pred: {:.0f}".format(truth, correct, predict))
 		test_rec /= test_count
 		test_pre /= test_count
 		print("{} Test Recall = {:.4f}\t Precision = {:.4f}".format(datetime.now(), test_rec, test_pre))
