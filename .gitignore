@@ -106,5 +106,5 @@ ENV/
 ./data/other/
 
 # tensor_board
-./tf_board/
+tf_board/
 
