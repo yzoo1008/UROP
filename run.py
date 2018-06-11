@@ -7,8 +7,8 @@ from dataset import DataSet
 
 
 # Learning params
-initial_learning_rate = 0.0000005
-num_epochs = 20
+initial_learning_rate = 0.0000001
+num_epochs = 30
 batch_size = 32
 
 # Network params
@@ -86,7 +86,7 @@ with tf.name_scope("train"):
 	gradients = list(zip(gradients, var_list))
 
 	# Create optimizer and apply gradient descent to the trainable variables
-	learning_rate = tf.train.exponential_decay(initial_learning_rate, batch_step*batch_size, train_size, 0.8, staircase=True)
+	learning_rate = tf.train.exponential_decay(initial_learning_rate, batch_step*batch_size, train_size, 0.96, staircase=True)
 	# optimizer = tf.train.GradientDescentOptimizer(learning_rate)
 	# train_op = optimizer.apply_gradients(grads_and_vars=gradients)
 
