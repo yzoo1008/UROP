@@ -22,7 +22,7 @@ class DataSet:
 
 		for id in self.ids:
 			img_path = './data/resize/' + str(self.mode) + '/' + str(id) + '.jpg'
-			mask_path = './data/mask_npy/' + str(self.mode) + '/' + str(id) + ".npy"
+			mask_path = './data/mask/' + str(self.mode) + '/' + str(id) + ".jpg"
 			self.x.append(img_path)
 			self.y.append(mask_path)
 
@@ -45,7 +45,7 @@ class DataSet:
 
 		masks = np.ndarray([batch_size, self.out_size[0], self.out_size[1], 1])
 		for i in range(len(masks_path)):
-			mask = np.load(masks_path[i])
+			mask = cv2.imread(masks_path[i])
 			mask = mask.astype(np.float32)
 			masks[i] = mask
 
