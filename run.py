@@ -109,7 +109,6 @@ y_threshold = tf.to_int32(y >= 1.)
 num_truth = tf.to_float(tf.reduce_sum(y_threshold))
 num_correct = tf.to_float(tf.reduce_sum(tf.multiply(x_threshold, y_threshold)))
 num_predict = tf.to_float(tf.reduce_sum(x_threshold))
-num_false = tf.to_float(tf.reduce_sum(tf.to_int32(y <= -1.)))
 
 with tf.name_scope("recall"):
 	recall = tf.cond(num_truth > 0., lambda: tf.div(num_correct, num_truth), lambda: tf.constant(0., dtype = tf.float32))
@@ -162,10 +161,10 @@ with tf.Session() as sess:
 			batch_xs, batch_ys = train_generator.next_batch(batch_size)
 
 			# And run the training op
-			n_t, n_c, n_p, n_f, cost, lr, _ = sess.run([num_truth, num_correct, num_predict, num_false, loss, learning_rate, train_op],
+			n_t, n_c, n_p, cost, lr, _ = sess.run([num_truth, num_correct, num_predict, loss, learning_rate, train_op],
 			                                           feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate, batch_step: total_step})
-			print("{:.0f}/{:.0f}epoch\t{:.0f}/{:.0f}step\tTrue: {:.0f}\tCorrect: {:.0f}\tPredict: {:.0f}\tFalse: {:.0f}\tLoss: {:.5f}\tLr: {:.4f}"
-			      .format(epoch, num_epochs, step, train_batches_per_epoch, n_t, n_c, n_p, n_f, cost, lr))
+			print("Epoch: {:.0f}/{:.0f}\tStep: {:.0f}/{:.0f}\tTrue: {:.0f}\tCorrect: {:.0f}\tPredict: {:.0f}\tLoss: {:.5f}\tLr: {:.9f}"
+			      .format(epoch, num_epochs, step, train_batches_per_epoch, n_t, n_c, n_p, cost, lr))
 
 			# Generate summary with the current batch of data and write to file
 			if step % display_step == 0:
@@ -182,11 +181,11 @@ with tf.Session() as sess:
 		test_count = 0
 		for _ in range(test_batches_per_epoch):
 			batch_tx, batch_ty = test_generator.next_batch(batch_size)
-			rec, pre, truth, correct, predict, g_true, g_false = sess.run([recall, precision, num_truth, num_correct, num_predict, num_ground_truth_true, num_ground_truth_false], feed_dict={x: batch_tx, y: batch_ty, keep_prob: 1.})
+			rec, pre, truth, correct, predict = sess.run([recall, precision, num_truth, num_correct, num_predict], feed_dict={x: batch_tx, y: batch_ty, keep_prob: 1.})
 			test_rec += rec
 			test_pre += pre
 			test_count += 1
-			print("Truth = {:.4f}\t Correct = {:.4f}\t Predict = {:.4f}\t Ture = {:.4f}\t False = {:.4f}".format(truth, correct, predict, g_true, g_false))
+			print("True = {:.4f}\t Correct = {:.4f}\t Predict = {:.4f}".format(truth, correct, predict))
 		test_rec /= test_count
 		test_pre /= test_count
 		print("{} Test Recall = {:.4f}\t Precision = {:.4f}".format(datetime.now(), test_rec, test_pre))
