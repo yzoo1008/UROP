@@ -59,9 +59,9 @@ se = tf.square(score - y)
 compensate_true = tf.multiply(weight_t_map, se)
 f_map = tf.multiply(ground_truth_false, se)
 
-check1 = tf.reduce_sum(weight_t_map)
-check2 = weight_t
-check3 = tf.div(check1, check2)
+check1 = tf.add(ground_truth_false. ground_truth_true)
+check2 = tf.reduce_sum(check1)
+
 
 # 2)
 ground_truth_true_reshape = tf.reshape(ground_truth_true, [-1])
@@ -166,15 +166,15 @@ with tf.Session() as sess:
 			batch_xs, batch_ys = train_generator.next_batch(batch_size)
 
 			# And run the training op
-			c1, c2, c3, n_t, n_c, n_p, n_f, cost, lr, _ = sess.run([check1, check2, check3, num_truth, num_correct, num_predict, num_false, loss, learning_rate, train_op],
+			c2, n_t, n_c, n_p, n_f, cost, lr, _ = sess.run([check2, num_truth, num_correct, num_predict, num_false, loss, learning_rate, train_op],
 			                                           feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate, batch_step: total_step})
-			print("{:.0f}/{:.0f}\tT: {:.4f}\tC: {:.4f}\tP: {:.4f}\tF: {:.4f}\tLoss: {:.4f}\tLr: {:.4f}\t{:.3f}\t{:.3f}\t{:.3f}"
-			      .format(step, train_batches_per_epoch, n_t, n_c, n_p, n_f, cost, lr, c1, c2, c3))
+			print("{:.0f}/{:.0f}\tT: {:.4f}\tC: {:.4f}\tP: {:.4f}\tF: {:.4f}\tLoss: {:.4f}\tLr: {:.4f}\t {:.2f}"
+			      .format(step, train_batches_per_epoch, n_t, n_c, n_p, n_f, cost, lr, c2))
 
-			# # Generate summary with the current batch of data and write to file
-			# if step % display_step == 0:
-			# 	s = sess.run(merged_summary, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1.})
-			# 	writer.add_summary(s, epoch * train_batches_per_epoch + step)
+			# Generate summary with the current batch of data and write to file
+			if step % display_step == 0:
+				s = sess.run(merged_summary, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1.})
+				writer.add_summary(s, epoch * train_batches_per_epoch + step)
 
 			step += 1
 			total_step += 1
