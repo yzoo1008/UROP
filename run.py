@@ -7,7 +7,7 @@ from dataset import DataSet
 
 
 # Learning params
-initial_learning_rate = 0.01
+initial_learning_rate = 0.00001
 num_epochs = 10
 batch_size = 32
 
@@ -59,7 +59,7 @@ se = tf.square(score - y)
 compensate_true = tf.multiply(weight_t_map, se)
 f_map = tf.multiply(ground_truth_false, se)
 
-check1 = tf.add(ground_truth_false. ground_truth_true)
+check1 = tf.add(ground_truth_false, ground_truth_true)
 check2 = tf.reduce_sum(check1)
 
 
