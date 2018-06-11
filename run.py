@@ -7,7 +7,7 @@ from dataset import DataSet
 
 
 # Learning params
-initial_learning_rate = 0.00001
+initial_learning_rate = 0.1
 num_epochs = 10
 batch_size = 32
 
@@ -91,11 +91,11 @@ with tf.name_scope("train"):
 
 	# Create optimizer and apply gradient descent to the trainable variables
 	learning_rate = tf.train.exponential_decay(initial_learning_rate, batch_step*batch_size, train_size,  0.9, staircase=True)
-	optimizer = tf.train.GradientDescentOptimizer(learning_rate)
-	train_op = optimizer.apply_gradients(grads_and_vars=gradients)
+	# optimizer = tf.train.GradientDescentOptimizer(learning_rate)
+	# train_op = optimizer.apply_gradients(grads_and_vars=gradients)
 
 	# 2)
-	# train_op = tf.train.AdamOptimizer(learning_rate).minimize(loss)
+	train_op = tf.train.AdamOptimizer(learning_rate).minimize(loss)
 
 # Add gradients to summary  
 for gradient, var in gradients:
@@ -171,10 +171,10 @@ with tf.Session() as sess:
 			print("{:.0f}/{:.0f}\tT: {:.4f}\tC: {:.4f}\tP: {:.4f}\tF: {:.4f}\tLoss: {:.4f}\tLr: {:.4f}\t {:.2f}"
 			      .format(step, train_batches_per_epoch, n_t, n_c, n_p, n_f, cost, lr, c2))
 
-			# Generate summary with the current batch of data and write to file
-			if step % display_step == 0:
-				s = sess.run(merged_summary, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1.})
-				writer.add_summary(s, epoch * train_batches_per_epoch + step)
+			# # Generate summary with the current batch of data and write to file
+			# if step % display_step == 0:
+			# 	s = sess.run(merged_summary, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1.})
+			# 	writer.add_summary(s, epoch * train_batches_per_epoch + step)
 
 			step += 1
 			total_step += 1
