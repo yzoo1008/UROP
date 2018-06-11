@@ -169,7 +169,7 @@ with tf.Session() as sess:
 
 			# Generate summary with the current batch of data and write to file
 			if step % display_step == 0:
-				s = sess.run(merged_summary, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1.})
+				s = sess.run(merged_summary, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1., batch_step: total_step})
 				writer.add_summary(s, epoch * train_batches_per_epoch + step)
 
 			step += 1
@@ -182,7 +182,7 @@ with tf.Session() as sess:
 		test_count = 0
 		for _ in range(test_batches_per_epoch):
 			batch_tx, batch_ty = test_generator.next_batch(batch_size)
-			rec, pre, truth, correct, predict = sess.run([recall, precision, num_truth, num_correct, num_predict], feed_dict={x: batch_tx, y: batch_ty, keep_prob: 1.})
+			rec, pre, truth, correct, predict = sess.run([recall, precision, num_truth, num_correct, num_predict], feed_dict={x: batch_tx, y: batch_ty, keep_prob: 1., batch_step: total_step})
 			test_rec += rec
 			test_pre += pre
 			test_count += 1
