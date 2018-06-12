@@ -100,7 +100,7 @@ def conv(x, filter_height, filter_width, num_filters, stride_y, stride_x, name, 
 		else:
 			weights = tf.get_variable('weights',
 			                          shape=[filter_height, filter_width, input_channels / groups, num_filters],
-			                          initializer=tf.keras.initializers.he_normal())
+			                          initializer=tf.contrib.layers.variance_scaling_initializer())
 		biases = tf.get_variable('biases', shape=[num_filters])
 
 		if groups == 1:
