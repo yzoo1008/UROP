@@ -93,7 +93,14 @@ def conv(x, filter_height, filter_width, num_filters, stride_y, stride_x, name, 
 
 	with tf.variable_scope(name) as scope:
 		# Create tf variables for the weights and biases of the conv layer
-		weights = tf.get_variable('weights', shape=[filter_height, filter_width, input_channels / groups, num_filters])
+		if relu:
+			weights = tf.get_variable('weights',
+			                          shape=[filter_height, filter_width, input_channels / groups, num_filters],
+			                          initializer=tf.contrib.layers.xavier_initializer())
+		else:
+			weights = tf.get_variable('weights',
+			                          shape=[filter_height, filter_width, input_channels / groups, num_filters],
+			                          initializer=tf.keras.initializers.he_normal())
 		biases = tf.get_variable('biases', shape=[num_filters])
 
 		if groups == 1:
