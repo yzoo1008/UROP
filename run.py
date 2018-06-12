@@ -164,7 +164,7 @@ with tf.Session() as sess:
 			# And run the training op
 			n_t, n_c, n_p, cost, lr, _ = sess.run([num_truth, num_correct, num_predict, loss, learning_rate, train_op],
 			                                           feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate, batch_step: total_step})
-			print("Epoch: {:.0f}/{:.0f}\tStep: {:.0f}/{:.0f}\tTrue: {:.0f}\tCorr: {:.0f}\tPred: {:.0f}\tLoss: {:.5f}\tLr: {:.9f}"
+			print("Epoch: {:2.0f}/{:2.0f}\tStep: {:3.0f}/{:3.0f}\tTrue: {:3.0f}\tCorr: {:3.0f}\tPred: {:5.0f}\tLoss: {:11.5f}\tLr: {:11.9f}"
 			      .format(epoch+1, num_epochs, step, train_batches_per_epoch, n_t, n_c, n_p, cost, lr))
 
 			# Generate summary with the current batch of data and write to file
@@ -186,10 +186,10 @@ with tf.Session() as sess:
 			test_rec += rec
 			test_pre += pre
 			test_count += 1
-			print("True: {:.0f}\t Corr: {:.0f}\t Pred: {:.0f}".format(truth, correct, predict))
+			print("True: {:3.0f}\t Corr: {:3.0f}\t Pred: {:5.0f}".format(truth, correct, predict))
 		test_rec /= test_count
 		test_pre /= test_count
-		print("{} Test Recall = {:.4f}\t Precision = {:.4f}".format(datetime.now(), test_rec, test_pre))
+		print("{} Test Recall = {:5.4f}\t Precision = {:5.4f}".format(datetime.now(), test_rec, test_pre))
 
 		# Reset the file pointer of the image data generator
 		test_generator.reset_pointer()
