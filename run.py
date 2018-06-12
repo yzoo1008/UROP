@@ -84,14 +84,14 @@ with tf.name_scope("train"):
 	# Get gradients of all trainable variables
 	gradients = tf.gradients(loss, var_list)
 	gradients = list(zip(gradients, var_list))
+	learning_rate = tf.train.exponential_decay(initial_learning_rate, batch_step * batch_size, train_size, 0.96, staircase=True)
 
 	# Create optimizer and apply gradient descent to the trainable variables
-	learning_rate = tf.train.exponential_decay(initial_learning_rate, batch_step*batch_size, train_size, 0.96, staircase=True)
-	# optimizer = tf.train.GradientDescentOptimizer(learning_rate)
-	# train_op = optimizer.apply_gradients(grads_and_vars=gradients)
+	optimizer = tf.train.GradientDescentOptimizer(learning_rate)
+	train_op = optimizer.apply_gradients(grads_and_vars=gradients)
 
 	# 2)
-	train_op = tf.train.AdamOptimizer(learning_rate).minimize(loss)
+	# train_op = tf.train.AdamOptimizer(learning_rate).minimize(loss)
 
 # Add gradients to summary  
 for gradient, var in gradients:
