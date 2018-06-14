@@ -167,7 +167,7 @@ with tf.Session() as sess:
 			# And run the training op
 			n_t, n_c, n_p, cost, lr, _ = sess.run([num_truth, num_correct, num_predict, loss, learning_rate, train_op],
 			                                           feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate, batch_step: total_step})
-			print("Epoch: {:2.0f}/{:2.0f}\tStep: {:3.0f}/{:3.0f}\tTrue: {:3.0f}\tCorr: {:3.0f}\tPred: {:5.0f}\tLoss: {:11.5f}\tLr: {:11.9f}"
+			print("Epoch: {:2.0f}/{:2.0f}\tStep: {:3.0f}/{:3.0f}\tTrue: {:3.0f}\tCorr: {:3.0f}\tPred: {:5.0f}\tLoss: {:11.5f}\tLr: {:14.12f}"
 			      .format(epoch+1, num_epochs, step, train_batches_per_epoch, n_t, n_c, n_p, cost, lr))
 
 			# Generate summary with the current batch of data and write to file
