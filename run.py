@@ -143,7 +143,10 @@ with tf.Session() as sess:
 	writer.add_graph(sess.graph)
 
 	# Load the pretrained weights into the non-trainable layer
-	model.load_initial_weights(sess)
+	# model.load_initial_weights(sess)
+	saver = tf.train.Saver()
+	load_path = os.path.join(checkpoint_path, 'model_epoch' + str(num_epochs) + '.ckpt')
+	saver.restore(sess, load_path)
 
 	print("{} Start training...".format(datetime.now()))
 	print("{} Open Tensorboard at --logdir {}".format(datetime.now(), filewriter_path))
