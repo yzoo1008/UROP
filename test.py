@@ -150,11 +150,14 @@ with tf.Session() as sess:
 	test_count = 0
 	for _ in range(test_batches_per_epoch):
 		batch_tx, batch_ty = test_generator.next_batch(batch_size)
-		rec, pre, truth, correct, predict = sess.run([recall, precision, num_truth, num_correct, num_predict], feed_dict={x: batch_tx, y: batch_ty, keep_prob: 1., batch_step: total_step})
+		rec, pre, truth, correct, predict, result = sess.run([recall, precision, num_truth, num_correct, num_predict, x_threshold], feed_dict={x: batch_tx, y: batch_ty, keep_prob: 1., batch_step: total_step})
 		test_rec += rec
 		test_pre += pre
 		test_count += 1
+		test_generator.collect(result)
 		print("True: {:3.0f}\t Corr: {:3.0f}\t Pred: {:5.0f}".format(truth, correct, predict))
+
+	print(np.shape(test_generator.get_threshold()))
 	test_rec /= test_count
 	test_pre /= test_count
 	print("{} Test Recall = {:5.4f}\t Precision = {:5.4f}".format(datetime.now(), test_rec, test_pre))
