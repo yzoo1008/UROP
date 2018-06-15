@@ -62,14 +62,7 @@ class DataSet:
 	def collect(self, data):
 		self.threshold.append(data)
 
+
 	def get_threshold(self):
-		return self.threshold
+		return self.threshold.reshape(-1, self.out_size, self.out_size, 1)
 
-
-'''
-if __name__ == '__main__':
-	train_generator = DataSet(mode='train')
-	print(train_generator.x[0])
-	print(train_generator.ids[0])
-	batch_xs, batch_ys = train_generator.next_batch(32)
-'''
