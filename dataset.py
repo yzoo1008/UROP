@@ -8,6 +8,7 @@ class DataSet:
 
 		self.x = []
 		self.y = []
+		self.threshold = []
 		self.pointer = 0
 		self.mode = mode
 		self.in_size = in_size
@@ -56,6 +57,14 @@ class DataSet:
 	def reset_pointer(self):
 
 		self.pointer = 0
+
+
+	def collect(self, data):
+		self.threshold.append(data)
+
+	def get_threshold(self):
+		return self.threshold
+
 
 '''
 if __name__ == '__main__':
