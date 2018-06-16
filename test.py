@@ -157,7 +157,9 @@ with tf.Session() as sess:
 		test_generator.collect(result)
 		print("True: {:3.0f}\t Corr: {:3.0f}\t Pred: {:5.0f}".format(truth, correct, predict))
 
-	print(np.shape(test_generator.get_threshold()))
 	test_rec /= test_count
 	test_pre /= test_count
 	print("{} Test Recall = {:5.4f}\t Precision = {:5.4f}".format(datetime.now(), test_rec, test_pre))
+
+	test_generator.save_threshold()
+
