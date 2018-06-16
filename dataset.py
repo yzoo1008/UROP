@@ -64,8 +64,10 @@ class DataSet:
 
 
 	def save_threshold(self):
-		for i in range(np.shape(self.threshold)[0]):
-			for j in range(self.out_size):
-				cv2.imwrite(self.threshold[i][j]*255.0,
-				            './data/threshold/' + str(self.mode) + '/' + str(self.ids[i*self.out_size+j])+'.jpg')
+		l1 = np.shape(self.threshold)[0]
+		l2 = np.shape(self.threshold)[1]
+		for i in range(l1):
+			for j in range(l2):
+				path = './data/threshold/test/' + str(self.ids[i*l2+j]) + '.jpg'
+				cv2.imwrite(path, self.threshold[i][j]*255.0)
 
