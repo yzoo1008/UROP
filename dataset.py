@@ -64,6 +64,7 @@ class DataSet:
 
 
 	def get_threshold(self):
+		print(len(self.ids[0:np.shape(self.threshold)[0]*np.shape(self.threshold)[1]]))
 		return self.threshold
 #		return np.reshape(self.threshold, [-1, self.out_size, self.out_size, 1])
 
