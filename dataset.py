@@ -64,5 +64,5 @@ class DataSet:
 
 
 	def get_threshold(self):
-		return self.threshold.reshape(-1, self.out_size, self.out_size, 1)
+		return np.reshape(self.threshold, (-1, self.out_size, self.out_size, 1))
 
