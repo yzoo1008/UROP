@@ -68,6 +68,7 @@ class DataSet:
 		l2 = np.shape(self.threshold)[1]
 		for i in range(l1):
 			for j in range(l2):
-				path = './data/threshold/test/' + str(self.ids[i*l2+j]) + '.jpg'
-				cv2.imwrite(path, self.threshold[i][j])
+				path = './data/threshold_npy/test/' + str(self.ids[i*l2+j]) + '.npy'
+				np.save(path, self.threshold[i][j])
+# cv2.imwrite(path, self.threshold[i][j])
 
