@@ -69,5 +69,5 @@ class DataSet:
 		for i in range(l1):
 			for j in range(l2):
 				path = './data/threshold/test/' + str(self.ids[i*l2+j]) + '.jpg'
-				cv2.imwrite(path, self.threshold[i][j]*255.0)
+				cv2.imwrite(path, self.threshold[i][j])
 
