@@ -28,5 +28,6 @@ for id in ids:
 
 	cv2.imshow("Output", output)
 	cv2.waitKey(0)
+	cv2.imwrite('./result/' + str(id) + '.jpg', output)
 
 os.remove('./test.jpg')
