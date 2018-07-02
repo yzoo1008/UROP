@@ -120,9 +120,9 @@ def conv(x, filter_height, filter_width, num_filters, stride_y, stride_x, name, 
 		bias = tf.reshape(tf.nn.bias_add(conv, biases), conv.get_shape().as_list())
 
 		if relu:
-			res = tf.nn.relu(bias, name=scope.name)
+			res = tf.nn.relu(bias, name=scope.name) # For Conv layer
 		else:
-			res = tf.nn.tanh(bias, name=scope.name)
+			res = tf.nn.tanh(bias, name=scope.name) # For FC layer
 
 		return res
 
