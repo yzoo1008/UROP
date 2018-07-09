@@ -72,3 +72,6 @@ class DataSet:
 				np.save(path, self.threshold[i][j])
 # cv2.imwrite(path, self.threshold[i][j])
 
+
+	def get_size(self):
+		return self.data_size
